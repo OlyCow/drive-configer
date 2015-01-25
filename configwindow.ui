@@ -290,6 +290,9 @@
                <height>24</height>
               </size>
              </property>
+             <property name="toolTip">
+              <string>&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;This is an advanced feature for storing keys. If you don't know what this is, just leave it as 1.&lt;/span&gt;&lt;/p&gt;</string>
+             </property>
              <property name="text">
               <string/>
              </property>
