@@ -18,3 +18,6 @@ SOURCES += main.cpp\
 HEADERS  += configwindow.h
 
 FORMS    += configwindow.ui
+
+RESOURCES += \
+    icons.qrc
