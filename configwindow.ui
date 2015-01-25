@@ -164,6 +164,36 @@
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
+           <layout class="QVBoxLayout" name="layout_encrypt_protocol">
+            <item>
+             <widget class="QRadioButton" name="radioButton_disabled">
+              <property name="text">
+               <string>Disabled</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="radioButton_WEP">
+              <property name="text">
+               <string>WEP</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="radioButton_AES">
+              <property name="text">
+               <string>AES</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="radioButton_TKIP">
+              <property name="text">
+               <string>TKIP</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </item>
          <item>
