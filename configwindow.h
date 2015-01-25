@@ -15,8 +15,21 @@ public:
 	explicit ConfigWindow(QWidget *parent = 0);
 	~ConfigWindow();
 
+private slots:
+	void on_radioButton_open_clicked();
+	void on_radioButton_shared_clicked();
+	void on_radioButton_WPA_clicked();
+	void on_radioButton_WPA2_clicked();
+
+	void on_radioButton_disabled_toggled(bool checked);
+
+	void on_pushButton_show_password_pressed();
+	void on_pushButton_show_password_released();
+
 private:
 	Ui::ConfigWindow *ui;
+
+	bool isWindows;
 };
 
 #endif // CONFIGWINDOW_H

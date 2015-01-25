@@ -19,8 +19,8 @@
    <string>ConfigWindow</string>
   </property>
   <widget class="QWidget" name="widget_main">
-   <layout class="QVBoxLayout" name="layout_main">
-    <item>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
      <layout class="QHBoxLayout" name="layout_network">
       <item>
        <layout class="QGridLayout" name="layout_network_info">
@@ -56,6 +56,9 @@
          <widget class="QCheckBox" name="checkBox_practice">
           <property name="text">
            <string>Practice</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -108,7 +111,7 @@
       </item>
      </layout>
     </item>
-    <item>
+    <item row="1" column="0">
      <layout class="QHBoxLayout" name="layout_configs">
       <item>
        <widget class="QGroupBox" name="groupBox_auth">
@@ -164,29 +167,38 @@
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <layout class="QVBoxLayout" name="layout_encrypt_protocol">
-            <item>
+           <layout class="QGridLayout" name="layout_protocols">
+            <item row="0" column="0">
              <widget class="QRadioButton" name="radioButton_disabled">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>Disabled</string>
               </property>
              </widget>
             </item>
-            <item>
+            <item row="0" column="1">
+             <widget class="QRadioButton" name="radioButton_AES">
+              <property name="text">
+               <string>AES</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
              <widget class="QRadioButton" name="radioButton_WEP">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>WEP</string>
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QRadioButton" name="radioButton_AES">
-              <property name="text">
-               <string>AES</string>
-              </property>
-             </widget>
-            </item>
-            <item>
+            <item row="1" column="1">
              <widget class="QRadioButton" name="radioButton_TKIP">
               <property name="text">
                <string>TKIP</string>
@@ -217,6 +229,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="pushButton_show_password">
+             <property name="focusPolicy">
+              <enum>Qt::ClickFocus</enum>
+             </property>
              <property name="text">
               <string>[EYE]</string>
              </property>
@@ -308,7 +323,7 @@
       </item>
      </layout>
     </item>
-    <item>
+    <item row="2" column="0">
      <layout class="QHBoxLayout" name="layout_program">
       <item>
        <widget class="Line" name="line_L">
@@ -363,6 +378,27 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>lineEdit_SSID</tabstop>
+  <tabstop>checkBox_adHoc</tabstop>
+  <tabstop>checkBox_practice</tabstop>
+  <tabstop>checkBox_competition</tabstop>
+  <tabstop>radioButton_open</tabstop>
+  <tabstop>radioButton_shared</tabstop>
+  <tabstop>radioButton_WPA</tabstop>
+  <tabstop>radioButton_WPA2</tabstop>
+  <tabstop>lineEdit_password</tabstop>
+  <tabstop>pushButton_load</tabstop>
+  <tabstop>pushButton_save</tabstop>
+  <tabstop>pushButton_show_password</tabstop>
+  <tabstop>spinBox_key_index</tabstop>
+  <tabstop>scrollArea_drives</tabstop>
+  <tabstop>pushButton_select_all</tabstop>
+  <tabstop>pushButton_select_invert</tabstop>
+  <tabstop>pushButton_select_none</tabstop>
+  <tabstop>pushButton_about</tabstop>
+  <tabstop>pushButton_help</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
