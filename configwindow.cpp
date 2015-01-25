@@ -25,6 +25,8 @@ void ConfigWindow::on_radioButton_open_clicked()
 	ui->radioButton_WEP->setEnabled(true);
 	if (ui->radioButton_AES->isChecked() || ui->radioButton_TKIP->isChecked()) {
 		ui->radioButton_disabled->setChecked(true);
+		ui->radioButton_AES->setChecked(false);
+		ui->radioButton_TKIP->setChecked(false);
 	}
 	ui->radioButton_AES->setDisabled(true);
 	ui->radioButton_TKIP->setDisabled(true);
@@ -34,9 +36,14 @@ void ConfigWindow::on_radioButton_shared_clicked()
 {
 	ui->radioButton_WEP->setEnabled(true);
 	ui->radioButton_WEP->setChecked(true);
+	// It's faster to just uncheck the buttons instead of checking the state
+	// of the radio button first (because that requires a call as well).
 	ui->radioButton_disabled->setDisabled(true);
+	ui->radioButton_disabled->setChecked(false);
 	ui->radioButton_AES->setDisabled(true);
+	ui->radioButton_AES->setChecked(false);
 	ui->radioButton_TKIP->setDisabled(true);
+	ui->radioButton_TKIP->setChecked(false);
 }
 
 void ConfigWindow::on_radioButton_WPA_clicked()
@@ -45,6 +52,8 @@ void ConfigWindow::on_radioButton_WPA_clicked()
 	ui->radioButton_TKIP->setEnabled(true);
 	if (ui->radioButton_disabled->isChecked() || ui->radioButton_WEP->isChecked()) {
 		ui->radioButton_AES->setChecked(true);
+		ui->radioButton_disabled->setChecked(false);
+		ui->radioButton_WEP->setChecked(false);
 	}
 	ui->radioButton_disabled->setDisabled(true);
 	ui->radioButton_WEP->setDisabled(true);
@@ -56,6 +65,8 @@ void ConfigWindow::on_radioButton_WPA2_clicked()
 	ui->radioButton_TKIP->setEnabled(true);
 	if (ui->radioButton_disabled->isChecked() || ui->radioButton_WEP->isChecked()) {
 		ui->radioButton_AES->setChecked(true);
+		ui->radioButton_disabled->setChecked(false);
+		ui->radioButton_WEP->setChecked(false);
 	}
 	ui->radioButton_disabled->setDisabled(true);
 	ui->radioButton_WEP->setDisabled(true);
