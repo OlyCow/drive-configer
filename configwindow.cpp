@@ -1,12 +1,16 @@
 #include "configwindow.h"
 #include "ui_configwindow.h"
 
-ConfigWindow::ConfigWindow(QWidget *parent) :
+ConfigWindow::ConfigWindow(QWidget* parent) :
 	QMainWindow(parent),
 	ui(new Ui::ConfigWindow),
-	refresh_timer(new QTimer(this))
+	refresh_timer(new QTimer(this)),
+	current_drives(QFileInfoList())
 {
 	ui->setupUi(this);
+	ui->scrollArea_drives->setLayout(new QVBoxLayout(this));
+
+	refresh_drives();
 
 	QObject::connect(	refresh_timer,	&QTimer::timeout,
 						this,			&ConfigWindow::refresh_drives);
@@ -29,6 +33,36 @@ void ConfigWindow::refresh_drives()
 {
 	QFileInfoList root_list = QDir::drives();
 	if (isWindows) {
+		bool isNotChanged = true;
+		if (root_list.size() != current_drives.size()) {
+			isNotChanged = false;
+		} else {
+			// TODO: Sort `root_list` first.
+			for (int i=0; i<root_list.size(); i++) {
+				if (root_list[i] != current_drives[i]) {
+					isNotChanged = false;
+					break;
+				}
+			}
+		}
+		if (!isNotChanged) {
+			current_drives = root_list;
+			QScrollArea* button_parent = ui->scrollArea_drives;
+			QLayout* drives_layout = button_parent->layout();
+			QList<QPushButton*> button_list = drives_layout->findChildren<QPushButton*>();
+			for (int i=0; i<button_list.size(); i++) {
+				drives_layout->removeWidget(button_list.back());
+				delete button_list.back();
+				button_list.pop_back();
+			}
+			for (int i=0; i<current_drives.size(); i++) {
+				QPushButton* drive_button = new QPushButton(button_parent);
+				drive_button->setMinimumHeight(60);
+				drive_button->setText(current_drives[i].absolutePath());
+				drive_button->setCheckable(true);
+				drives_layout->addWidget(drive_button);
+			}
+		}
 	} else {
 	}
 }

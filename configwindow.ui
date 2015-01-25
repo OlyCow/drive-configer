@@ -318,6 +318,9 @@
         <layout class="QVBoxLayout" name="layout_drives">
          <item>
           <widget class="QScrollArea" name="scrollArea_drives">
+           <property name="horizontalScrollBarPolicy">
+            <enum>Qt::ScrollBarAlwaysOff</enum>
+           </property>
            <property name="widgetResizable">
             <bool>true</bool>
            </property>
