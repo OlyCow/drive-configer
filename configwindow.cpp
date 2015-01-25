@@ -3,9 +3,14 @@
 
 ConfigWindow::ConfigWindow(QWidget *parent) :
 	QMainWindow(parent),
-	ui(new Ui::ConfigWindow)
+	ui(new Ui::ConfigWindow),
+	refresh_timer(new QTimer(this))
 {
 	ui->setupUi(this);
+
+	QObject::connect(	refresh_timer,	&QTimer::timeout,
+						this,			&ConfigWindow::refresh_drives);
+	refresh_timer->start(1000);
 
 	#ifdef Q_OS_WIN
 	isWindows = true;
@@ -17,6 +22,15 @@ ConfigWindow::ConfigWindow(QWidget *parent) :
 ConfigWindow::~ConfigWindow()
 {
 	delete ui;
+	delete refresh_timer;
+}
+
+void ConfigWindow::refresh_drives()
+{
+	QFileInfoList root_list = QDir::drives();
+	if (isWindows) {
+	} else {
+	}
 }
 
 void ConfigWindow::on_radioButton_open_clicked()
