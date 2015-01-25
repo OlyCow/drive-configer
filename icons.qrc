@@ -6,5 +6,6 @@
         <file>icons/refresh.png</file>
         <file>icons/upload.png</file>
         <file>icons/info-24.png</file>
+        <file>icons/key.png</file>
     </qresource>
 </RCC>

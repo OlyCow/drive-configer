@@ -3,6 +3,12 @@
 
 #include <QMainWindow>
 
+#include <QTimer>
+
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+
 namespace Ui {
 class ConfigWindow;
 }
@@ -16,6 +22,8 @@ public:
 	~ConfigWindow();
 
 private slots:
+	void refresh_drives();
+
 	void on_radioButton_open_clicked();
 	void on_radioButton_shared_clicked();
 	void on_radioButton_WPA_clicked();
@@ -28,6 +36,7 @@ private slots:
 
 private:
 	Ui::ConfigWindow *ui;
+	QTimer* refresh_timer;
 
 	bool isWindows;
 };

@@ -10,125 +10,78 @@
     <height>480</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>720</width>
+    <height>480</height>
+   </size>
+  </property>
   <property name="font">
    <font>
     <pointsize>12</pointsize>
    </font>
   </property>
   <property name="windowTitle">
-   <string>ConfigWindow</string>
+   <string>'Oly Cow - Drive Configer</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="icons.qrc">
+    <normaloff>:/icons/key.png</normaloff>:/icons/key.png</iconset>
   </property>
   <widget class="QWidget" name="widget_main">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <layout class="QHBoxLayout" name="layout_network">
-      <item>
-       <layout class="QGridLayout" name="layout_network_info">
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="lineEdit_SSID">
-          <property name="placeholderText">
-           <string>Name of Network</string>
-          </property>
-          <property name="clearButtonEnabled">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_SSID">
-          <property name="text">
-           <string>SSID:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" colspan="2">
-         <widget class="QCheckBox" name="checkBox_adHoc">
-          <property name="text">
-           <string>Ad-hoc Network</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QGridLayout" name="layout_network_type">
-        <item row="1" column="1">
-         <widget class="QCheckBox" name="checkBox_practice">
-          <property name="text">
-           <string>Practice</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QCheckBox" name="checkBox_competition">
-          <property name="text">
-           <string>Competition</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0" colspan="2">
-         <widget class="QLabel" name="label_network_type">
-          <property name="text">
-           <string>Save network type as:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" rowspan="2">
-         <spacer name="spacer_network_type">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="layout_actions">
-        <item>
-         <widget class="QPushButton" name="pushButton_load">
-          <property name="text">
-           <string>Load</string>
-          </property>
-          <property name="icon">
-           <iconset resource="icons.qrc">
-            <normaloff>:/icons/download.png</normaloff>:/icons/download.png</iconset>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton_save">
-          <property name="text">
-           <string>Save</string>
-          </property>
-          <property name="icon">
-           <iconset resource="icons.qrc">
-            <normaloff>:/icons/upload.png</normaloff>:/icons/upload.png</iconset>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </item>
-    <item row="1" column="0">
+   <layout class="QGridLayout" name="gridLayout_main">
+    <property name="leftMargin">
+     <number>15</number>
+    </property>
+    <property name="topMargin">
+     <number>15</number>
+    </property>
+    <property name="rightMargin">
+     <number>15</number>
+    </property>
+    <property name="bottomMargin">
+     <number>15</number>
+    </property>
+    <property name="verticalSpacing">
+     <number>18</number>
+    </property>
+    <item row="2" column="0">
      <layout class="QHBoxLayout" name="layout_configs">
+      <property name="spacing">
+       <number>12</number>
+      </property>
       <item>
        <widget class="QGroupBox" name="groupBox_auth">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>140</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="title">
          <string>Authentication</string>
         </property>
         <layout class="QVBoxLayout" name="layout_auth">
          <item>
           <widget class="QRadioButton" name="radioButton_open">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string>Open</string>
            </property>
@@ -136,6 +89,12 @@
          </item>
          <item>
           <widget class="QRadioButton" name="radioButton_shared">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string>Shared</string>
            </property>
@@ -143,6 +102,12 @@
          </item>
          <item>
           <widget class="QRadioButton" name="radioButton_WPA">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string>WPA-PSK</string>
            </property>
@@ -150,6 +115,12 @@
          </item>
          <item>
           <widget class="QRadioButton" name="radioButton_WPA2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string>WPA2-PSK</string>
            </property>
@@ -167,6 +138,15 @@
          <string>Encryption</string>
         </property>
         <layout class="QVBoxLayout" name="layout_encrypt">
+         <property name="spacing">
+          <number>30</number>
+         </property>
+         <property name="topMargin">
+          <number>18</number>
+         </property>
+         <property name="bottomMargin">
+          <number>36</number>
+         </property>
          <item>
           <widget class="QFrame" name="frame_encrypt">
            <property name="frameShape">
@@ -218,10 +198,13 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="layout_password">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <item>
             <widget class="QLabel" name="label_password">
              <property name="text">
-              <string>Password:</string>
+              <string>Password: </string>
              </property>
             </widget>
            </item>
@@ -259,6 +242,9 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="layout_key_index">
+           <property name="spacing">
+            <number>12</number>
+           </property>
            <item>
             <widget class="QLabel" name="label_key_index">
              <property name="text">
@@ -268,6 +254,12 @@
            </item>
            <item>
             <widget class="QSpinBox" name="spinBox_key_index">
+             <property name="minimumSize">
+              <size>
+               <width>60</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="minimum">
               <number>1</number>
              </property>
@@ -279,7 +271,7 @@
            <item>
             <widget class="QLabel" name="label_key_index_help">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -308,6 +300,18 @@
       </item>
       <item>
        <widget class="QGroupBox" name="groupBox_drives">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>240</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="title">
          <string>Drives</string>
         </property>
@@ -322,8 +326,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>252</width>
-              <height>251</height>
+              <width>221</width>
+              <height>175</height>
              </rect>
             </property>
            </widget>
@@ -333,6 +337,18 @@
           <layout class="QHBoxLayout" name="layout_selection">
            <item>
             <widget class="QPushButton" name="pushButton_select_all">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>36</height>
+              </size>
+             </property>
              <property name="text">
               <string>All</string>
              </property>
@@ -340,6 +356,18 @@
            </item>
            <item>
             <widget class="QPushButton" name="pushButton_select_invert">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>36</height>
+              </size>
+             </property>
              <property name="text">
               <string>Invert</string>
              </property>
@@ -347,6 +375,18 @@
            </item>
            <item>
             <widget class="QPushButton" name="pushButton_select_none">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>36</height>
+              </size>
+             </property>
              <property name="text">
               <string>None</string>
              </property>
@@ -359,8 +399,17 @@
       </item>
      </layout>
     </item>
-    <item row="2" column="0">
+    <item row="3" column="0">
      <layout class="QHBoxLayout" name="layout_program">
+      <property name="spacing">
+       <number>8</number>
+      </property>
+      <property name="leftMargin">
+       <number>24</number>
+      </property>
+      <property name="rightMargin">
+       <number>24</number>
+      </property>
       <item>
        <widget class="Line" name="line_L">
         <property name="sizePolicy">
@@ -382,7 +431,26 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="pushButton">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>36</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Settings</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="pushButton_about">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>36</height>
+         </size>
+        </property>
         <property name="text">
          <string>About</string>
         </property>
@@ -390,6 +458,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="pushButton_help">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>36</height>
+         </size>
+        </property>
         <property name="text">
          <string>Help</string>
         </property>
@@ -410,13 +484,194 @@
       </item>
      </layout>
     </item>
+    <item row="0" column="0">
+     <layout class="QHBoxLayout" name="layout_network">
+      <property name="spacing">
+       <number>32</number>
+      </property>
+      <property name="leftMargin">
+       <number>24</number>
+      </property>
+      <property name="rightMargin">
+       <number>24</number>
+      </property>
+      <item>
+       <layout class="QGridLayout" name="layout_network_info">
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="lineEdit_SSID">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>240</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="placeholderText">
+           <string>Name of Network</string>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_SSID">
+          <property name="text">
+           <string>SSID:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <layout class="QHBoxLayout" name="layout_adHoc">
+          <item>
+           <spacer name="spacer_adHoc">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>120</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_adHoc">
+            <property name="text">
+             <string>Ad-hoc Network</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="layout_network_type">
+        <property name="verticalSpacing">
+         <number>0</number>
+        </property>
+        <item row="0" column="0" colspan="2">
+         <widget class="QLabel" name="label_network_type">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Save network type as:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QCheckBox" name="checkBox_competition">
+          <property name="text">
+           <string>Competition</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" rowspan="2">
+         <spacer name="spacer_network_type">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>60</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="1">
+         <widget class="QCheckBox" name="checkBox_practice">
+          <property name="text">
+           <string>Practice</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="layout_actions">
+        <item>
+         <widget class="QPushButton" name="pushButton_load">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>36</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Load</string>
+          </property>
+          <property name="icon">
+           <iconset resource="icons.qrc">
+            <normaloff>:/icons/download.png</normaloff>:/icons/download.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_save">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>36</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Save</string>
+          </property>
+          <property name="icon">
+           <iconset resource="icons.qrc">
+            <normaloff>:/icons/upload.png</normaloff>:/icons/upload.png</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0">
+     <widget class="Line" name="line_main">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
   <tabstop>lineEdit_SSID</tabstop>
-  <tabstop>checkBox_adHoc</tabstop>
   <tabstop>checkBox_practice</tabstop>
   <tabstop>checkBox_competition</tabstop>
   <tabstop>radioButton_open</tabstop>
