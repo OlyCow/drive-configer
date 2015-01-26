@@ -5,7 +5,7 @@ ConfigWindow::ConfigWindow(QWidget* parent) :
 	QMainWindow(parent),
 	ui(new Ui::ConfigWindow),
 	refresh_timer(new QTimer(this)),
-	current_drives(QFileInfoList())
+	current_drives(QList<QStorageInfo>())
 {
 	ui->setupUi(this);
 	ui->scrollArea_drives->setLayout(new QVBoxLayout(this));
@@ -15,55 +15,65 @@ ConfigWindow::ConfigWindow(QWidget* parent) :
 	QObject::connect(	refresh_timer,	&QTimer::timeout,
 						this,			&ConfigWindow::refresh_drives);
 	refresh_timer->start(1000);
-
-	#ifdef Q_OS_WIN
-	isWindows = true;
-	#else
-	isWindows = false;
-	#endif //Q_OS_WIN
 }
 
 ConfigWindow::~ConfigWindow()
 {
-	delete ui;
 	delete refresh_timer;
+	delete ui;
 }
 
 void ConfigWindow::refresh_drives()
 {
-	QFileInfoList root_list = QDir::drives();
-	if (isWindows) {
-		bool isNotChanged = true;
-		if (root_list.size() != current_drives.size()) {
-			isNotChanged = false;
-		} else {
-			// TODO: Sort `root_list` first.
-			for (int i=0; i<root_list.size(); i++) {
-				if (root_list[i] != current_drives[i]) {
-					isNotChanged = false;
-					break;
-				}
-			}
-		}
-		if (!isNotChanged) {
-			current_drives = root_list;
-			QScrollArea* button_parent = ui->scrollArea_drives;
-			QLayout* drives_layout = button_parent->layout();
-			QList<QPushButton*> button_list = drives_layout->findChildren<QPushButton*>();
-			for (int i=0; i<button_list.size(); i++) {
-				drives_layout->removeWidget(button_list.back());
-				delete button_list.back();
-				button_list.pop_back();
-			}
-			for (int i=0; i<current_drives.size(); i++) {
-				QPushButton* drive_button = new QPushButton(button_parent);
-				drive_button->setMinimumHeight(60);
-				drive_button->setText(current_drives[i].absolutePath());
-				drive_button->setCheckable(true);
-				drives_layout->addWidget(drive_button);
-			}
-		}
+	QList<QStorageInfo> read_list = QStorageInfo::mountedVolumes();
+	bool isNotChanged = true;
+	if (read_list.size() != current_drives.size()) {
+		isNotChanged = false;
 	} else {
+		// TODO: Sort `read_list` first?
+		for (int i=0; i<read_list.size(); i++) {
+			if (read_list[i] != current_drives[i]) {
+				isNotChanged = false;
+				break;
+			}
+		}
+	}
+	if (!isNotChanged) {
+		current_drives = read_list;
+		QScrollArea* button_parent = ui->scrollArea_drives;
+		QLayout* drives_layout = button_parent->layout();
+		QList<QPushButton*> button_list = drives_layout->findChildren<QPushButton*>();
+		for (int i=0; i<button_list.size(); i++) {
+			drives_layout->removeWidget(button_list.front());
+			delete button_list.front();
+			button_list.pop_front();
+		}
+		for (int i=0; i<current_drives.size(); i++) {
+			QPushButton* drive_button = new QPushButton(button_parent);
+			drive_button->setMinimumHeight(60);
+			QString button_text = "";
+			QTextStream text_stream(&button_text);
+			text_stream << "(" + current_drives[i].rootPath() + ") ";
+			if (current_drives[i].rootPath() != current_drives[i].displayName()) {
+				text_stream << current_drives[i].displayName() << endl;
+			} else {
+				text_stream << "[UNNAMED]" << endl;
+			}
+			float gigabytes = static_cast<float>(current_drives[i].bytesTotal());
+			gigabytes /= 1024.0*1024.0*1024.0;
+			text_stream.setNumberFlags(QTextStream::ForcePoint);
+			text_stream.setRealNumberPrecision(4);
+			text_stream << gigabytes << " GB" << endl;
+			QString file_system = current_drives[i].fileSystemType();
+			if (file_system == "") {
+				text_stream << "[UNKNOWN FS]";
+			} else {
+				text_stream << file_system;
+			}
+			drive_button->setText(*(text_stream.string()));
+			drive_button->setCheckable(true);
+			drives_layout->addWidget(drive_button);
+		}
 	}
 }
 

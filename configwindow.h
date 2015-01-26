@@ -5,12 +5,12 @@
 
 #include <QList>
 
+#include <QString>
+#include <QTextStream>
+
 #include <QTimer>
 
 #include <QStorageInfo>
-#include <QDir>
-#include <QFile>
-#include <QFileInfo>
 
 #include <QVBoxLayout>
 #include <QScrollArea>
@@ -44,7 +44,7 @@ private slots:
 private:
 	Ui::ConfigWindow* ui;
 	QTimer* refresh_timer;
-	QFileInfoList current_drives;
+	QList<QStorageInfo> current_drives;
 
 	bool isWindows;
 };
