@@ -6,6 +6,8 @@
 #include <QString>
 #include <QTextStream>
 
+#include <QMessageAuthenticationCode>
+
 #include <QTimer>
 
 #include <QStorageInfo>
@@ -38,6 +40,8 @@ public:
 	QString get_encrypt_type();
 	QString get_connect_type();
 	int get_key_index();
+
+	QString PBKDF2(QString password, QString salt, int iterations, int length);
 
 private slots:
 	void refresh_drives();

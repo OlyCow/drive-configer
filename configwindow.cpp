@@ -250,7 +250,10 @@ QString ConfigWindow::get_key()
 	QString master_key = "";
 	if (ui->radioButton_WEP->isChecked()) {
 	} else if (ui->radioButton_AES->isChecked()) {
-
+		master_key = PBKDF2(	ui->lineEdit_password->text(),
+								ui->lineEdit_SSID->text(),
+								4096,
+								256);
 	}
 	return master_key;
 }
@@ -299,4 +302,9 @@ QString ConfigWindow::get_connect_type()
 int ConfigWindow::get_key_index()
 {
 	return ui->spinBox_key_index->value();
+}
+
+QString ConfigWindow::PBKDF2(QString password, QString salt, int iterations, int length)
+{
+	return "LETMEIN";
 }
