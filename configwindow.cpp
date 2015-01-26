@@ -308,3 +308,43 @@ QString ConfigWindow::PBKDF2(QString password, QString salt, int iterations, int
 {
 	return "LETMEIN";
 }
+
+char* ConfigWindow::encrypt_block(char* password, char* salt, int iterations, int pass)
+{
+	// HMAC-SHA1 returns 160 bits (20 bytes)
+	char output[20] = {0};
+	const int size_salt = sizeof(output)/sizeof(char);
+	const int size_int = 32/8; // 32-bit int is 4 bytes
+	const int size_key = size_salt + size_int;
+	char key[size_key] = {0};
+	for (int i=0; i<size_salt; i++) {
+		key[i] = output[i];
+	}
+	for (int i=size_int; i>0; i--) {
+		quint32 temp = pass >> (8*(i-1));
+		quint32 output = 0xFF & temp;
+		char char_output = output;
+		key[size_salt+(size_int-i)] = char_output;
+	}
+	char* U_i[20] = HMAC_SHA1(password, key);
+	for (int i=0; i<20; i++) {
+		output[i] = U_i[i];
+	}
+	// start at i=1 because already had initial pass
+	for (int i=1; i<iterations; i++) {
+		U_i = HMAC_SHA1(password, U_i);
+		for (int j=0; j<20; j++) {
+			output[i] = output[i] ^ U_i[i];
+		}
+	}
+	return output;
+}
+
+char* ConfigWindow::HMAC_SHA1(char* password, char* salt)
+{
+	char output[20] = {0};
+	QByteArray hashed = QMessageAuthenticationCode::hash(	password,
+															key,
+															QCryptographicHash::Sha1);
+	return output;
+}
