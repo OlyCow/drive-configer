@@ -318,6 +318,9 @@
         <layout class="QVBoxLayout" name="layout_drives">
          <item>
           <widget class="QScrollArea" name="scrollArea_drives">
+           <property name="verticalScrollBarPolicy">
+            <enum>Qt::ScrollBarAlwaysOn</enum>
+           </property>
            <property name="horizontalScrollBarPolicy">
             <enum>Qt::ScrollBarAlwaysOff</enum>
            </property>
@@ -332,7 +335,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>178</width>
+              <width>161</width>
               <height>186</height>
              </rect>
             </property>

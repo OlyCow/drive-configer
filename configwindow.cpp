@@ -9,6 +9,7 @@ ConfigWindow::ConfigWindow(QWidget* parent) :
 {
 	ui->setupUi(this);
 	QVBoxLayout* layout_drives = new QVBoxLayout(ui->scrollAreaWidgetContents);
+	layout_drives->setContentsMargins(4, 4, 16, 4);
 	ui->scrollAreaWidgetContents->setLayout(layout_drives);
 
 	refresh_drives();
@@ -146,4 +147,27 @@ void ConfigWindow::on_pushButton_show_password_pressed()
 void ConfigWindow::on_pushButton_show_password_released()
 {
 	ui->lineEdit_password->setEchoMode(QLineEdit::Password);
+}
+
+void ConfigWindow::on_pushButton_select_all_clicked()
+{
+	for (int i=0; i<list_buttons.size(); i++) {
+		if (list_buttons[i]->isChecked() == false) {
+			list_buttons[i]->click();
+		}
+	}
+}
+void ConfigWindow::on_pushButton_select_invert_clicked()
+{
+	for (int i=0; i<list_buttons.size(); i++) {
+		list_buttons[i]->click();
+	}
+}
+void ConfigWindow::on_pushButton_select_none_clicked()
+{
+	for (int i=0; i<list_buttons.size(); i++) {
+		if (list_buttons[i]->isChecked() == true) {
+			list_buttons[i]->click();
+		}
+	}
 }
