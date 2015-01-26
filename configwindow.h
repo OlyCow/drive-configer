@@ -9,6 +9,8 @@
 #include <QTimer>
 
 #include <QStorageInfo>
+#include <QDir>
+#include <QFile>
 
 #include <QWidget>
 #include <QVBoxLayout>
@@ -29,8 +31,18 @@ public:
 	explicit ConfigWindow(QWidget* parent = 0);
 	~ConfigWindow();
 
+	QString get_SSID();
+	QString get_key();
+	QString get_auto_key();
+	QString get_auth_type();
+	QString get_encrypt_type();
+	QString get_connect_type();
+	int get_key_index();
+
 private slots:
 	void refresh_drives();
+
+	void on_checkBox_adHoc_toggled(bool checked);
 
 	void on_radioButton_open_clicked();
 	void on_radioButton_shared_clicked();
@@ -45,6 +57,9 @@ private slots:
 	void on_pushButton_select_all_clicked();
 	void on_pushButton_select_invert_clicked();
 	void on_pushButton_select_none_clicked();
+
+	void on_pushButton_load_clicked();
+	void on_pushButton_save_clicked();
 
 private:
 	Ui::ConfigWindow* ui;

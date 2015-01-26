@@ -80,14 +80,26 @@ void ConfigWindow::refresh_drives()
 	}
 }
 
+void ConfigWindow::on_checkBox_adHoc_toggled(bool checked)
+{
+	if (checked) {
+		if (ui->radioButton_WPA->isChecked() || ui->radioButton_WPA2->isChecked()) {
+			ui->radioButton_open->click();
+		}
+		ui->radioButton_WPA->setDisabled(true);
+		ui->radioButton_WPA2->setDisabled(true);
+	} else {
+		ui->radioButton_WPA->setEnabled(true);
+		ui->radioButton_WPA2->setEnabled(true);
+	}
+}
+
 void ConfigWindow::on_radioButton_open_clicked()
 {
 	ui->radioButton_disabled->setEnabled(true);
 	ui->radioButton_WEP->setEnabled(true);
 	if (ui->radioButton_AES->isChecked() || ui->radioButton_TKIP->isChecked()) {
-		ui->radioButton_disabled->setChecked(true);
-		ui->radioButton_AES->setChecked(false);
-		ui->radioButton_TKIP->setChecked(false);
+		ui->radioButton_disabled->click();
 	}
 	ui->radioButton_AES->setDisabled(true);
 	ui->radioButton_TKIP->setDisabled(true);
@@ -95,24 +107,19 @@ void ConfigWindow::on_radioButton_open_clicked()
 void ConfigWindow::on_radioButton_shared_clicked()
 {
 	ui->radioButton_WEP->setEnabled(true);
-	ui->radioButton_WEP->setChecked(true);
+	ui->radioButton_WEP->click();
 	// It's faster to just uncheck the buttons instead of checking the state
 	// of the radio button first (because that requires a call as well).
 	ui->radioButton_disabled->setDisabled(true);
-	ui->radioButton_disabled->setChecked(false);
 	ui->radioButton_AES->setDisabled(true);
-	ui->radioButton_AES->setChecked(false);
 	ui->radioButton_TKIP->setDisabled(true);
-	ui->radioButton_TKIP->setChecked(false);
 }
 void ConfigWindow::on_radioButton_WPA_clicked()
 {
 	ui->radioButton_AES->setEnabled(true);
 	ui->radioButton_TKIP->setEnabled(true);
 	if (ui->radioButton_disabled->isChecked() || ui->radioButton_WEP->isChecked()) {
-		ui->radioButton_AES->setChecked(true);
-		ui->radioButton_disabled->setChecked(false);
-		ui->radioButton_WEP->setChecked(false);
+		ui->radioButton_AES->click();
 	}
 	ui->radioButton_disabled->setDisabled(true);
 	ui->radioButton_WEP->setDisabled(true);
@@ -122,9 +129,7 @@ void ConfigWindow::on_radioButton_WPA2_clicked()
 	ui->radioButton_AES->setEnabled(true);
 	ui->radioButton_TKIP->setEnabled(true);
 	if (ui->radioButton_disabled->isChecked() || ui->radioButton_WEP->isChecked()) {
-		ui->radioButton_AES->setChecked(true);
-		ui->radioButton_disabled->setChecked(false);
-		ui->radioButton_WEP->setChecked(false);
+		ui->radioButton_AES->click();
 	}
 	ui->radioButton_disabled->setDisabled(true);
 	ui->radioButton_WEP->setDisabled(true);
@@ -170,4 +175,128 @@ void ConfigWindow::on_pushButton_select_none_clicked()
 			list_buttons[i]->click();
 		}
 	}
+}
+
+void ConfigWindow::on_pushButton_load_clicked()
+{
+}
+void ConfigWindow::on_pushButton_save_clicked()
+{
+	QVector<QPushButton*> list_checked;
+	QVector<int> index_checked;
+	for (int i=0; i<list_buttons.size(); i++) {
+		if (list_buttons[i]->isChecked()) {
+			list_checked.push_back(list_buttons[i]);
+			index_checked.push_back(i);
+		}
+	}
+	for (int i=0; i<list_checked.size(); i++) {
+		QString output = "";
+		QTextStream text(&output);
+		text << "Wireless Network Settings" << endl;
+		text << endl;
+		text <<	"Print this document and store it in a safe place " <<
+				"for future reference.  You may need these settings " <<
+				"to add additional computers and devices to your network.";
+		text << endl << endl << endl;
+		text << "Wireless Settings" << endl;
+		text << endl;
+		text << "Network Name (SSID): " << get_SSID() << endl;
+		text << "Network Key (WEP/WPA Key): " << get_key() << endl;
+		text << "Key Provided Automatically (802.1x): " << get_auto_key() << endl;
+		text << "Network Authentication Type: " << get_auth_type() << endl;
+		text << "Data Encryption Type: " << get_encrypt_type() << endl;
+		text << "Connection Type: " << get_connect_type() << endl;
+		text << "Key Index: " << get_key_index() << endl;
+		text << endl;
+		text <<	"To enable File and Printer Sharing on this computer, " <<
+				"run the Network Setup Wizard." << endl << endl;
+		text <<	"To set up your Internet connection, follow the " <<
+				"instructions from your Internet Service Provider (ISP).";
+		text << endl;
+		text.flush();
+		QDir explorer(current_drives[index_checked[i]].rootPath());
+		if (ui->checkBox_practice->isChecked()) {
+			explorer.mkdir("SMRTNTKY");
+			explorer.cd("SMRTNTKY");
+			QFile settings(explorer.absolutePath() + "/WSETTING.TXT");
+			settings.open(QIODevice::ReadWrite | QIODevice::Text);
+			QTextStream writer(&settings);
+			writer << output;
+			writer.flush();
+			settings.close();
+			explorer.cdUp();
+		}
+		if (ui->checkBox_competition->isChecked()) {
+			explorer.mkdir("FTCNTKY");
+			explorer.cd("FTCNTKY");
+			QFile settings(explorer.absolutePath() + "/WSETTING.TXT");
+			settings.open(QIODevice::ReadWrite | QIODevice::Text);
+			QTextStream writer(&settings);
+			writer << output;
+			writer.flush();
+			settings.close();
+			explorer.cdUp();
+		}
+	}
+}
+
+QString ConfigWindow::get_SSID()
+{
+	return ui->lineEdit_SSID->text();
+}
+QString ConfigWindow::get_key()
+{
+	QString master_key = "";
+	if (ui->radioButton_WEP->isChecked()) {
+	} else if (ui->radioButton_AES->isChecked()) {
+
+	}
+	return master_key;
+}
+QString ConfigWindow::get_auto_key()
+{
+	return "0"; // I think this is always "0"?
+}
+QString ConfigWindow::get_auth_type()
+{
+	QString auth_type = "";
+	if (ui->radioButton_open->isChecked()) {
+		auth_type = "Open";
+	} else if (ui->radioButton_shared->isChecked()) {
+		auth_type = "Shared";
+	} else if (ui->radioButton_WPA->isChecked()) {
+		auth_type = "WPAPSK";
+	} else {
+		auth_type = "WPA2PSK";
+	}
+	return auth_type;
+}
+QString ConfigWindow::get_encrypt_type()
+{
+	QString encrypt_type = "";
+	if (ui->radioButton_disabled->isChecked()) {
+		encrypt_type = "Disabled";
+	} else if (ui->radioButton_WEP->isChecked()) {
+		encrypt_type = "WEP";
+	} else if (ui->radioButton_AES->isChecked()) {
+		encrypt_type = "AES";
+	} else {
+		encrypt_type = "TKIP";
+	}
+	return encrypt_type;
+}
+QString ConfigWindow::get_connect_type()
+{
+	QString connect_type = "";
+	if (ui->checkBox_adHoc->isChecked()) {
+		connect_type = "IBSS";
+	} else {
+		connect_type = "ESS";
+	}
+	return connect_type;
+}
+int ConfigWindow::get_key_index()
+{
+	return ui->spinBox_key_index->value();
 }
