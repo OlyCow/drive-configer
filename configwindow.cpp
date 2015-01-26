@@ -8,7 +8,8 @@ ConfigWindow::ConfigWindow(QWidget* parent) :
 	current_drives(QList<QStorageInfo>())
 {
 	ui->setupUi(this);
-	ui->scrollArea_drives->setLayout(new QVBoxLayout(this));
+	QVBoxLayout* layout_drives = new QVBoxLayout(ui->scrollAreaWidgetContents);
+	ui->scrollAreaWidgetContents->setLayout(layout_drives);
 
 	refresh_drives();
 
@@ -40,24 +41,23 @@ void ConfigWindow::refresh_drives()
 	}
 	if (!isNotChanged) {
 		current_drives = read_list;
-		QScrollArea* button_parent = ui->scrollArea_drives;
+		QWidget* button_parent = ui->scrollAreaWidgetContents;
 		QLayout* drives_layout = button_parent->layout();
-		QList<QPushButton*> button_list = drives_layout->findChildren<QPushButton*>();
-		for (int i=0; i<button_list.size(); i++) {
-			drives_layout->removeWidget(button_list.front());
-			delete button_list.front();
-			button_list.pop_front();
+		for (int i=0, size=list_buttons.size(); i<size; i++) {
+			drives_layout->removeWidget(list_buttons.back());
+			delete list_buttons.back();
+			list_buttons.pop_back();
 		}
 		for (int i=0; i<current_drives.size(); i++) {
 			QPushButton* drive_button = new QPushButton(button_parent);
-			drive_button->setMinimumHeight(60);
+			drive_button->setMinimumHeight(72);
 			QString button_text = "";
 			QTextStream text_stream(&button_text);
 			text_stream << "(" + current_drives[i].rootPath() + ") ";
 			if (current_drives[i].rootPath() != current_drives[i].displayName()) {
 				text_stream << current_drives[i].displayName() << endl;
 			} else {
-				text_stream << "[UNNAMED]" << endl;
+				text_stream << "[---]" << endl;
 			}
 			float gigabytes = static_cast<float>(current_drives[i].bytesTotal());
 			gigabytes /= 1024.0*1024.0*1024.0;
@@ -66,13 +66,15 @@ void ConfigWindow::refresh_drives()
 			text_stream << gigabytes << " GB" << endl;
 			QString file_system = current_drives[i].fileSystemType();
 			if (file_system == "") {
-				text_stream << "[UNKNOWN FS]";
+				text_stream << "[---]";
 			} else {
 				text_stream << file_system;
 			}
+			text_stream.flush();
 			drive_button->setText(*(text_stream.string()));
 			drive_button->setCheckable(true);
 			drives_layout->addWidget(drive_button);
+			list_buttons.push_back(drive_button);
 		}
 	}
 }
@@ -89,7 +91,6 @@ void ConfigWindow::on_radioButton_open_clicked()
 	ui->radioButton_AES->setDisabled(true);
 	ui->radioButton_TKIP->setDisabled(true);
 }
-
 void ConfigWindow::on_radioButton_shared_clicked()
 {
 	ui->radioButton_WEP->setEnabled(true);
@@ -103,7 +104,6 @@ void ConfigWindow::on_radioButton_shared_clicked()
 	ui->radioButton_TKIP->setDisabled(true);
 	ui->radioButton_TKIP->setChecked(false);
 }
-
 void ConfigWindow::on_radioButton_WPA_clicked()
 {
 	ui->radioButton_AES->setEnabled(true);
@@ -116,7 +116,6 @@ void ConfigWindow::on_radioButton_WPA_clicked()
 	ui->radioButton_disabled->setDisabled(true);
 	ui->radioButton_WEP->setDisabled(true);
 }
-
 void ConfigWindow::on_radioButton_WPA2_clicked()
 {
 	ui->radioButton_AES->setEnabled(true);

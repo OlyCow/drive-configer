@@ -1,10 +1,8 @@
 #ifndef CONFIGWINDOW_H
 #define CONFIGWINDOW_H
 
-#include <QMainWindow>
-
+#include <QVector>
 #include <QList>
-
 #include <QString>
 #include <QTextStream>
 
@@ -12,9 +10,12 @@
 
 #include <QStorageInfo>
 
+#include <QWidget>
 #include <QVBoxLayout>
 #include <QScrollArea>
 #include <QPushButton>
+
+#include <QMainWindow>
 
 namespace Ui {
 class ConfigWindow;
@@ -45,8 +46,7 @@ private:
 	Ui::ConfigWindow* ui;
 	QTimer* refresh_timer;
 	QList<QStorageInfo> current_drives;
-
-	bool isWindows;
+	QVector<QPushButton*> list_buttons;
 };
 
 #endif // CONFIGWINDOW_H
