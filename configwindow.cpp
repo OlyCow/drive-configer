@@ -329,12 +329,11 @@ QString ConfigWindow::PBKDF2(QString password, QString salt, int iterations, int
 
 char* ConfigWindow::encrypt_block(char* password, char* salt, int iterations, int pass)
 {
-	// HMAC-SHA1 returns 160 bits (20 bytes)
-	char sizer[20] = {0};
-	char* output = sizer;
-	const int size_salt = strlen(salt)/sizeof(char);
-	const int size_int = 32/8; // 32-bit int is 4 bytes
-	const int size_key = size_salt + size_int;
+    // HMAC-SHA1 returns 160 bits (20 bytes)
+    char output[20] = {0};
+    int size_salt = strlen(salt)/sizeof(salt[0]);
+    const int size_int = 32/8; // 32-bit int is 4 bytes
+    int size_key = size_salt + size_int;
 	char* key = new char [size_key];
 	for (int i=0; i<size_salt; i++) {
 		key[i] = salt[i];
@@ -345,22 +344,21 @@ char* ConfigWindow::encrypt_block(char* password, char* salt, int iterations, in
 		char char_output = output;
 		key[size_salt+(size_int-i)] = char_output;
 	}
-	qDebug() << QByteArray(key).toHex();
+    qDebug() << "password: " << QByteArray(password).toHex();
+    qDebug() << "key: " << QByteArray(key).toHex();
 	char* U_i = HMAC_SHA1(password, key);
-	qDebug() << QByteArray(U_i).toHex();
+    qDebug() << "hashed: " << QByteArray(U_i).toHex();
 	for (int i=0; i<20; i++) {
 		output[i] = U_i[i];
 	}
 	// start at i=1 because already had initial pass
 	for (int i=1; i<iterations; i++) {
-		U_i = HMAC_SHA1(password, U_i);
-		qDebug() << QByteArray(U_i).toHex();
+        U_i = HMAC_SHA1(password, U_i);
 		for (int j=0; j<20; j++) {
 			qDebug() << output[i];
 			output[i] = output[i] ^ U_i[i];
 			qDebug() << output[i];
-		}
-		qDebug() << QByteArray(output).toHex();
+        }
 	}
 	return output;
 }
