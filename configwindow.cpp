@@ -17,6 +17,8 @@ ConfigWindow::ConfigWindow(QWidget* parent) :
 	QObject::connect(	refresh_timer,	&QTimer::timeout,
 						this,			&ConfigWindow::refresh_drives);
 	refresh_timer->start(1000);
+
+	qDebug() << PBKDF2("password", "FTC_PASTURE", 128, 32).toLatin1().toHex();
 }
 
 ConfigWindow::~ConfigWindow()
@@ -67,7 +69,7 @@ void ConfigWindow::refresh_drives()
 			text_stream << gigabytes << " GB" << endl;
 			QString file_system = current_drives[i].fileSystemType();
 			if (file_system == "") {
-				text_stream << "[---]";
+				text_stream << "[?]";
 			} else {
 				text_stream << file_system;
 			}
@@ -306,19 +308,36 @@ int ConfigWindow::get_key_index()
 
 QString ConfigWindow::PBKDF2(QString password, QString salt, int iterations, int length)
 {
-	return "LETMEIN";
+	char output[32] = {0};
+	char* block_A = encrypt_block(	password.toLatin1().data(),
+									salt.toLatin1().data(),
+									iterations,
+									1);
+	char* block_B = encrypt_block(	password.toLatin1().data(),
+									salt.toLatin1().data(),
+									iterations,
+									2);
+	for (int i=0; i<20; i++) {
+		output[i] = block_A[i];
+	}
+	for (int i=0; i<12; i++) {
+		output[i+20] = block_B[i];
+	}
+	QString output_key(output);
+	return output_key;
 }
 
 char* ConfigWindow::encrypt_block(char* password, char* salt, int iterations, int pass)
 {
 	// HMAC-SHA1 returns 160 bits (20 bytes)
-	char output[20] = {0};
-	const int size_salt = sizeof(output)/sizeof(char);
+	char sizer[20] = {0};
+	char* output = sizer;
+	const int size_salt = strlen(salt)/sizeof(char);
 	const int size_int = 32/8; // 32-bit int is 4 bytes
 	const int size_key = size_salt + size_int;
-	char key[size_key] = {0};
+	char* key = new char [size_key];
 	for (int i=0; i<size_salt; i++) {
-		key[i] = output[i];
+		key[i] = salt[i];
 	}
 	for (int i=size_int; i>0; i--) {
 		quint32 temp = pass >> (8*(i-1));
@@ -326,25 +345,30 @@ char* ConfigWindow::encrypt_block(char* password, char* salt, int iterations, in
 		char char_output = output;
 		key[size_salt+(size_int-i)] = char_output;
 	}
-	char* U_i[20] = HMAC_SHA1(password, key);
+	char* U_i = HMAC_SHA1(password, key);
 	for (int i=0; i<20; i++) {
 		output[i] = U_i[i];
 	}
 	// start at i=1 because already had initial pass
 	for (int i=1; i<iterations; i++) {
 		U_i = HMAC_SHA1(password, U_i);
+		qDebug() << QByteArray(U_i).toHex();
 		for (int j=0; j<20; j++) {
+			qDebug() << output[i];
 			output[i] = output[i] ^ U_i[i];
+			qDebug() << output[i];
 		}
+		qDebug() << QByteArray(output).toHex();
 	}
 	return output;
 }
 
 char* ConfigWindow::HMAC_SHA1(char* password, char* salt)
 {
-	char output[20] = {0};
-	QByteArray hashed = QMessageAuthenticationCode::hash(	password,
-															key,
+	char* output;
+	QByteArray hashed = QMessageAuthenticationCode::hash(	QByteArray(password),
+															QByteArray(salt),
 															QCryptographicHash::Sha1);
+	output = hashed.data();
 	return output;
 }
