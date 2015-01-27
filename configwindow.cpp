@@ -345,7 +345,9 @@ char* ConfigWindow::encrypt_block(char* password, char* salt, int iterations, in
 		char char_output = output;
 		key[size_salt+(size_int-i)] = char_output;
 	}
+	qDebug() << QByteArray(key).toHex();
 	char* U_i = HMAC_SHA1(password, key);
+	qDebug() << QByteArray(U_i).toHex();
 	for (int i=0; i<20; i++) {
 		output[i] = U_i[i];
 	}
