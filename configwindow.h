@@ -47,7 +47,7 @@ public:
 	QString get_connect_type();
 	int get_key_index();
 
-	static QString PBKDF2(QString password, QString salt, int iterations, int length);
+	static QByteArray PBKDF2(QString password, QString salt, int iterations, int length);
 	static std::vector<char> encrypt_block(std::vector<char> password, std::vector<char> salt, int iterations, int pass);
 	static std::vector<char> HMAC_SHA1(std::vector<char> password, std::vector<char> salt);
 	static void disp_char_vect(std::vector<char> input);

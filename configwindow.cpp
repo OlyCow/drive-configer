@@ -18,7 +18,7 @@ ConfigWindow::ConfigWindow(QWidget* parent) :
 						this,			&ConfigWindow::refresh_drives);
 	refresh_timer->start(1000);
 
-	qDebug() << PBKDF2("password", "FTC_PASTURE", 2, 32).toLatin1().toHex();
+	qDebug() << PBKDF2("password", "FTC_PASTURE", 4096, 32);
 }
 
 ConfigWindow::~ConfigWindow()
@@ -255,7 +255,7 @@ QString ConfigWindow::get_key()
 		master_key = PBKDF2(	ui->lineEdit_password->text(),
 								ui->lineEdit_SSID->text(),
 								4096,
-								256);
+								32);
 	}
 	return master_key;
 }
@@ -306,7 +306,7 @@ int ConfigWindow::get_key_index()
 	return ui->spinBox_key_index->value();
 }
 
-QString ConfigWindow::PBKDF2(QString password, QString salt, int iterations, int length)
+QByteArray ConfigWindow::PBKDF2(QString password, QString salt, int iterations, int length)
 {
 	char* output = new char[length];
 	std::vector<char> password_vect;
@@ -331,8 +331,11 @@ QString ConfigWindow::PBKDF2(QString password, QString salt, int iterations, int
 	for (int i=0; i<12; i++) {
 		output[i+20] = block_B[i];
 	}
-	QString output_key(output);
-	return output_key;
+	QByteArray output_key;
+	for (int i = 0; i<length; i++) {
+		output_key.push_back(output[i]);
+	}
+	return output_key.toHex();
 }
 
 std::vector<char> ConfigWindow::encrypt_block(std::vector<char> password, std::vector<char> salt, int iterations, int pass)
@@ -366,12 +369,14 @@ std::vector<char> ConfigWindow::encrypt_block(std::vector<char> password, std::v
 	}
 	// start at i=1 because already had initial pass
 	for (int i=1; i<iterations; i++) {
-		U_i = HMAC_SHA1(password, U_i);
+		std::vector<char> U_prev(U_i);
+		U_i = HMAC_SHA1(password, U_prev);
 		for (int j=0; j<20; j++) {
-			qDebug() << output[i];
-			output[i] = output[i] ^ U_i[i];
+			output[j] = output[j] ^ U_i[j];
 		}
 	}
+	qDebug() << "hash(?):";
+	disp_char_vect(output);
 	return output;
 }
 
