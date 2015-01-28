@@ -3,6 +3,9 @@
 
 #include <QDebug>
 
+#include <vector>
+#include <string>
+
 #include <QVector>
 #include <QList>
 #include <QByteArray>
@@ -45,8 +48,9 @@ public:
 	int get_key_index();
 
 	static QString PBKDF2(QString password, QString salt, int iterations, int length);
-	static char* encrypt_block(char* password, char* salt, int iterations, int pass);
-	static char* HMAC_SHA1(char* password, char* salt);
+	static std::vector<char> encrypt_block(std::vector<char> password, std::vector<char> salt, int iterations, int pass);
+	static std::vector<char> HMAC_SHA1(std::vector<char> password, std::vector<char> salt);
+	static void disp_char_vect(std::vector<char> input);
 
 private slots:
 	void refresh_drives();

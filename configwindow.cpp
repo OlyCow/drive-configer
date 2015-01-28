@@ -18,7 +18,7 @@ ConfigWindow::ConfigWindow(QWidget* parent) :
 						this,			&ConfigWindow::refresh_drives);
 	refresh_timer->start(1000);
 
-	qDebug() << PBKDF2("password", "FTC_PASTURE", 128, 32).toLatin1().toHex();
+	qDebug() << PBKDF2("password", "FTC_PASTURE", 2, 32).toLatin1().toHex();
 }
 
 ConfigWindow::~ConfigWindow()
@@ -308,15 +308,23 @@ int ConfigWindow::get_key_index()
 
 QString ConfigWindow::PBKDF2(QString password, QString salt, int iterations, int length)
 {
-	char output[32] = {0};
-	char* block_A = encrypt_block(	password.toLatin1().data(),
-									salt.toLatin1().data(),
-									iterations,
-									1);
-	char* block_B = encrypt_block(	password.toLatin1().data(),
-									salt.toLatin1().data(),
-									iterations,
-									2);
+	char* output = new char[length];
+	std::vector<char> password_vect;
+	for (int i=0; i<password.length(); i++) {
+		password_vect.push_back(password[i].toLatin1());
+	}
+	std::vector<char> salt_vect;
+	for (int i=0; i<salt.length(); i++) {
+		salt_vect.push_back(salt[i].toLatin1());
+	}
+	std::vector<char> block_A = encrypt_block(	password_vect,
+												salt_vect,
+												iterations,
+												1);
+	std::vector<char> block_B = encrypt_block(	password_vect,
+												salt_vect,
+												iterations,
+												2);
 	for (int i=0; i<20; i++) {
 		output[i] = block_A[i];
 	}
@@ -327,14 +335,14 @@ QString ConfigWindow::PBKDF2(QString password, QString salt, int iterations, int
 	return output_key;
 }
 
-char* ConfigWindow::encrypt_block(char* password, char* salt, int iterations, int pass)
+std::vector<char> ConfigWindow::encrypt_block(std::vector<char> password, std::vector<char> salt, int iterations, int pass)
 {
-    // HMAC-SHA1 returns 160 bits (20 bytes)
-    char output[20] = {0};
-    int size_salt = strlen(salt)/sizeof(salt[0]);
-    const int size_int = 32/8; // 32-bit int is 4 bytes
-    int size_key = size_salt + size_int;
-	char* key = new char [size_key];
+	// HMAC-SHA1 returns 160 bits (20 bytes)
+	std::vector<char> output(20, 0);
+	int size_salt = salt.size();
+	const int size_int = 32/8; // 32-bit int is 4 bytes
+	int size_key = size_salt + size_int;
+	std::vector<char> key(size_key);
 	for (int i=0; i<size_salt; i++) {
 		key[i] = salt[i];
 	}
@@ -344,31 +352,56 @@ char* ConfigWindow::encrypt_block(char* password, char* salt, int iterations, in
 		char char_output = output;
 		key[size_salt+(size_int-i)] = char_output;
 	}
-    qDebug() << "password: " << QByteArray(password).toHex();
-    qDebug() << "key: " << QByteArray(key).toHex();
-	char* U_i = HMAC_SHA1(password, key);
-    qDebug() << "hashed: " << QByteArray(U_i).toHex();
+	std::vector<char> U_i = HMAC_SHA1(password, key);
+
+	qDebug() << "password:";
+	disp_char_vect(password);
+	qDebug() << "key:";
+	disp_char_vect(key);
+	qDebug() << "hashed:";
+	disp_char_vect(U_i);
+
 	for (int i=0; i<20; i++) {
 		output[i] = U_i[i];
 	}
 	// start at i=1 because already had initial pass
 	for (int i=1; i<iterations; i++) {
-        U_i = HMAC_SHA1(password, U_i);
+		U_i = HMAC_SHA1(password, U_i);
 		for (int j=0; j<20; j++) {
 			qDebug() << output[i];
 			output[i] = output[i] ^ U_i[i];
-			qDebug() << output[i];
-        }
+		}
 	}
 	return output;
 }
 
-char* ConfigWindow::HMAC_SHA1(char* password, char* salt)
+std::vector<char> ConfigWindow::HMAC_SHA1(std::vector<char> password, std::vector<char> salt)
 {
-	char* output;
-	QByteArray hashed = QMessageAuthenticationCode::hash(	QByteArray(password),
-															QByteArray(salt),
+	std::vector<char> output;
+	QByteArray raw_password;
+	for (unsigned int i=0; i<password.size(); i++) {
+		raw_password.push_back(password[i]);
+	}
+	QByteArray raw_salt;
+	for (unsigned int i=0; i<salt.size(); i++) {
+		raw_salt.push_back(salt[i]);
+	}
+	QByteArray hashed = QMessageAuthenticationCode::hash(	raw_password,
+															raw_salt,
 															QCryptographicHash::Sha1);
-	output = hashed.data();
+	char* output_raw = hashed.data();
+	for (int i=0; i<hashed.length(); i++) {
+		int coal = output_raw[i];
+		output.push_back((char)coal); //this was one line but I thought it was necessary
+	}
 	return output;
+}
+
+void ConfigWindow::disp_char_vect(std::vector<char> input)
+{
+	QByteArray disp;
+	for (unsigned int i=0; i<input.size(); i++) {
+		disp.push_back(input[i]);
+	}
+	qDebug() << disp.toHex();
 }
