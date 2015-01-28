@@ -355,25 +355,26 @@ std::vector<char> ConfigWindow::encrypt_block(std::vector<char> password, std::v
 		char char_output = output;
 		key[size_salt+(size_int-i)] = char_output;
 	}
-	std::vector<char> U_i = HMAC_SHA1(password, key);
+	std::vector<char> U_1 = HMAC_SHA1(password, key);
 
 	qDebug() << "password:";
 	disp_char_vect(password);
 	qDebug() << "key:";
 	disp_char_vect(key);
 	qDebug() << "hashed:";
-	disp_char_vect(U_i);
+	disp_char_vect(U_1);
 
 	for (int i=0; i<20; i++) {
-		output[i] = U_i[i];
+		output[i] = U_1[i];
 	}
+	std::vector<char> U_i(U_1);
 	// start at i=1 because already had initial pass
 	for (int i=1; i<iterations; i++) {
-		std::vector<char> U_prev(U_i);
-		U_i = HMAC_SHA1(password, U_prev);
+		U_i = HMAC_SHA1(password, U_i);
 		for (int j=0; j<20; j++) {
 			output[j] = output[j] ^ U_i[j];
 		}
+		disp_char_vect(output);
 	}
 	qDebug() << "hash(?):";
 	disp_char_vect(output);
