@@ -17,8 +17,6 @@ ConfigWindow::ConfigWindow(QWidget* parent) :
 	QObject::connect(	refresh_timer,	&QTimer::timeout,
 						this,			&ConfigWindow::refresh_drives);
 	refresh_timer->start(1000);
-
-	qDebug() << PBKDF2("password", "FTC_PASTURE", 4096, 32);
 }
 
 ConfigWindow::~ConfigWindow()
@@ -251,12 +249,12 @@ QString ConfigWindow::get_key()
 {
 	QString master_key = "";
 	if (ui->radioButton_WEP->isChecked()) {
-	} else if (ui->radioButton_AES->isChecked()) {
+	} else if (ui->radioButton_AES->isChecked() || ui->radioButton_TKIP->isChecked()) {
 		master_key = PBKDF2(	ui->lineEdit_password->text(),
 								ui->lineEdit_SSID->text(),
 								4096,
 								32);
-	}
+	} // else it should stay as ""
 	return master_key;
 }
 QString ConfigWindow::get_auto_key()
@@ -308,23 +306,23 @@ int ConfigWindow::get_key_index()
 
 QByteArray ConfigWindow::PBKDF2(QString password, QString salt, int iterations, int length)
 {
-	char* output = new char[length];
-	std::vector<char> password_vect;
+	std::vector<uint8_t> output(length);
+	std::vector<uint8_t> password_vect;
 	for (int i=0; i<password.length(); i++) {
-		password_vect.push_back(password[i].toLatin1());
+		password_vect.push_back((uint8_t)(password[i].toLatin1()));
 	}
-	std::vector<char> salt_vect;
+	std::vector<uint8_t> salt_vect;
 	for (int i=0; i<salt.length(); i++) {
-		salt_vect.push_back(salt[i].toLatin1());
+		salt_vect.push_back((uint8_t)(salt[i].toLatin1()));
 	}
-	std::vector<char> block_A = encrypt_block(	password_vect,
-												salt_vect,
-												iterations,
-												1);
-	std::vector<char> block_B = encrypt_block(	password_vect,
-												salt_vect,
-												iterations,
-												2);
+	std::vector<uint8_t> block_A = encrypt_block(	password_vect,
+													salt_vect,
+													iterations,
+													1);
+	std::vector<uint8_t> block_B = encrypt_block(	password_vect,
+													salt_vect,
+													iterations,
+													2);
 	for (int i=0; i<20; i++) {
 		output[i] = block_A[i];
 	}
@@ -338,24 +336,24 @@ QByteArray ConfigWindow::PBKDF2(QString password, QString salt, int iterations, 
 	return output_key.toHex();
 }
 
-std::vector<char> ConfigWindow::encrypt_block(std::vector<char> password, std::vector<char> salt, int iterations, int pass)
+std::vector<uint8_t> ConfigWindow::encrypt_block(std::vector<uint8_t> password, std::vector<uint8_t> salt, int iterations, int pass)
 {
 	// HMAC-SHA1 returns 160 bits (20 bytes)
-	std::vector<char> output(20, 0);
+	std::vector<uint8_t> output;
 	int size_salt = salt.size();
 	const int size_int = 32/8; // 32-bit int is 4 bytes
 	int size_key = size_salt + size_int;
-	std::vector<char> key(size_key);
+	std::vector<uint8_t> key(size_key);
 	for (int i=0; i<size_salt; i++) {
 		key[i] = salt[i];
 	}
 	for (int i=size_int; i>0; i--) {
-		quint32 temp = pass >> (8*(i-1));
-		quint32 output = 0xFF & temp;
-		char char_output = output;
+		uint32_t temp = pass >> (8*(i-1));
+		uint32_t output = 0xFF & temp;
+		uint8_t char_output = output;
 		key[size_salt+(size_int-i)] = char_output;
 	}
-	std::vector<char> U_1 = HMAC_SHA1(password, key);
+	std::vector<uint8_t> U_1 = HMAC_SHA1(password, key);
 
 	qDebug() << "password:";
 	disp_char_vect(password);
@@ -365,9 +363,9 @@ std::vector<char> ConfigWindow::encrypt_block(std::vector<char> password, std::v
 	disp_char_vect(U_1);
 
 	for (int i=0; i<20; i++) {
-		output[i] = U_1[i];
+		output.push_back(U_1[i]);
 	}
-	std::vector<char> U_i(U_1);
+	std::vector<uint8_t> U_i(U_1);
 	// start at i=1 because already had initial pass
 	for (int i=1; i<iterations; i++) {
 		U_i = HMAC_SHA1(password, U_i);
@@ -381,9 +379,9 @@ std::vector<char> ConfigWindow::encrypt_block(std::vector<char> password, std::v
 	return output;
 }
 
-std::vector<char> ConfigWindow::HMAC_SHA1(std::vector<char> password, std::vector<char> salt)
+std::vector<uint8_t> ConfigWindow::HMAC_SHA1(std::vector<uint8_t> password, std::vector<uint8_t> salt)
 {
-	std::vector<char> output;
+	std::vector<uint8_t> output;
 	QByteArray raw_password;
 	for (unsigned int i=0; i<password.size(); i++) {
 		raw_password.push_back(password[i]);
@@ -392,18 +390,18 @@ std::vector<char> ConfigWindow::HMAC_SHA1(std::vector<char> password, std::vecto
 	for (unsigned int i=0; i<salt.size(); i++) {
 		raw_salt.push_back(salt[i]);
 	}
-	QByteArray hashed = QMessageAuthenticationCode::hash(	raw_password,
-															raw_salt,
+	QByteArray hashed = QMessageAuthenticationCode::hash(	raw_salt,
+															raw_password,
 															QCryptographicHash::Sha1);
 	char* output_raw = hashed.data();
 	for (int i=0; i<hashed.length(); i++) {
-		int coal = output_raw[i];
-		output.push_back((char)coal); //this was one line but I thought it was necessary
+		uint8_t coal = output_raw[i];
+		output.push_back((uint8_t)coal); //this was one line but I thought it was necessary
 	}
 	return output;
 }
 
-void ConfigWindow::disp_char_vect(std::vector<char> input)
+void ConfigWindow::disp_char_vect(std::vector<uint8_t> input)
 {
 	QByteArray disp;
 	for (unsigned int i=0; i<input.size(); i++) {
