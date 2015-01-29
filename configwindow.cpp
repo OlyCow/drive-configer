@@ -249,12 +249,14 @@ QString ConfigWindow::get_key()
 {
 	QString master_key = "";
 	if (ui->radioButton_WEP->isChecked()) {
+		QByteArray ascii_chars(ui->lineEdit_password->text().toLatin1().toHex());
+		master_key = QString(ascii_chars);
 	} else if (ui->radioButton_AES->isChecked() || ui->radioButton_TKIP->isChecked()) {
 		master_key = PBKDF2(	ui->lineEdit_password->text(),
 								ui->lineEdit_SSID->text(),
 								4096,
 								32);
-	} // else it should stay as ""
+	} // else it should stay as "" (blank)
 	return master_key;
 }
 QString ConfigWindow::get_auto_key()
@@ -354,13 +356,6 @@ std::vector<uint8_t> ConfigWindow::encrypt_block(std::vector<uint8_t> password, 
 		key[size_salt+(size_int-i)] = char_output;
 	}
 	std::vector<uint8_t> U_1 = HMAC_SHA1(password, key);
-
-	qDebug() << "password:";
-	disp_char_vect(password);
-	qDebug() << "key:";
-	disp_char_vect(key);
-	qDebug() << "hashed:";
-	disp_char_vect(U_1);
 
 	for (int i=0; i<20; i++) {
 		output.push_back(U_1[i]);
