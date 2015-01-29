@@ -1,8 +1,15 @@
 #ifndef CONFIGWINDOW_H
 #define CONFIGWINDOW_H
 
+#include <QDebug>
+
+#include <cstdint>
+#include <vector>
+#include <string>
+
 #include <QVector>
 #include <QList>
+#include <QByteArray>
 #include <QString>
 #include <QTextStream>
 
@@ -41,7 +48,10 @@ public:
 	QString get_connect_type();
 	int get_key_index();
 
-	QString PBKDF2(QString password, QString salt, int iterations, int length);
+	static QByteArray PBKDF2(QString password, QString salt, int iterations, int length);
+	static std::vector<uint8_t> encrypt_block(std::vector<uint8_t> password, std::vector<uint8_t> salt, int iterations, int pass);
+	static std::vector<uint8_t> HMAC_SHA1(std::vector<uint8_t> password, std::vector<uint8_t> salt);
+	static void disp_char_vect(std::vector<uint8_t> input);
 
 private slots:
 	void refresh_drives();
