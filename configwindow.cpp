@@ -60,11 +60,66 @@ void ConfigWindow::refresh_drives()
 			} else {
 				text_stream << "[NO NAME]" << endl;
 			}
-			float gigabytes = static_cast<float>(current_drives[i].bytesTotal());
-			gigabytes /= 1024.0*1024.0*1024.0;
-			text_stream.setNumberFlags(QTextStream::ForcePoint);
-			text_stream.setRealNumberPrecision(4);
-			text_stream << gigabytes << " GB" << endl;
+			float bytes = static_cast<float>(current_drives[i].bytesTotal());
+			float kilobytes = bytes/1024.0;
+			float megabytes = kilobytes/1024.0;
+			float gigabytes = megabytes/1024.0;
+			enum DispMag {
+				DISP_B	= 0,
+				DISP_K,
+				DISP_M,
+				DISP_G
+			};
+			DispMag dispMag = DISP_G;
+			float disp_float = gigabytes;
+			if (gigabytes < 1.0) {
+				if (megabytes > 1.0) {
+					dispMag = DISP_M;
+				} else if (kilobytes > 1.0) {
+					dispMag = DISP_K;
+				} else {
+					dispMag = DISP_B;
+				}
+			}
+			switch (dispMag) {
+				case DISP_B :
+					disp_float = bytes;
+					break;
+				case DISP_K :
+					disp_float = kilobytes;
+					break;
+				case DISP_M :
+					disp_float = megabytes;
+					break;
+				case DISP_G :
+					disp_float = gigabytes;
+					break;
+			}
+			int float_precision = 4;
+			if (disp_float < 100.0) {
+				float_precision = 3;
+			}
+			if (bytes >= 1.0) {
+				text_stream.setNumberFlags(QTextStream::ForcePoint);
+				text_stream.setRealNumberPrecision(float_precision);
+			}
+			text_stream << disp_float << " ";
+			switch (dispMag) {
+				case DISP_B :
+					text_stream << "bytes";
+					break;
+				case DISP_K :
+					text_stream << "kB";
+					break;
+				case DISP_M :
+					text_stream << "MB";
+					break;
+				case DISP_G :
+					text_stream << "GB";
+					break;
+			}
+
+			text_stream << endl;
 			QString file_system = current_drives[i].fileSystemType();
 			if (file_system == "") {
 				text_stream << "Unknown FS";
