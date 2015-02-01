@@ -209,6 +209,53 @@ void ConfigWindow::on_pushButton_show_password_released()
 	ui->lineEdit_password->setEchoMode(QLineEdit::Password);
 }
 
+void ConfigWindow::on_lineEdit_password_editingFinished()
+{
+	QString password = ui->lineEdit_password->text();
+	int length = password.length();
+	QString message = "";
+	if (ui->radioButton_AES->isChecked() || ui->radioButton_TKIP->isChecked()) {
+		if (length>0) {
+			bool isASCII = true;
+			for (int i=0; i<length; i++) {
+				if (password[i].unicode() > 127) {
+					isASCII = false;
+					break;
+				}
+			}
+			if (!isASCII) {
+				message = "The password must only contain ASCII characters.";
+			} else if (length<8 || length>63) {
+				if (length == 64) {
+					message = "You have entered a hexadecimal password. If you want to enter a normal password, it must be 8 to 63 characters long.";
+				} else {
+					message = "The password must be 8 to 63 characters long.";
+				}
+			} else {
+			}
+		}
+	} else if (ui->radioButton_WEP->isChecked()) {
+		if (length > 0) {
+			bool isASCII = true;
+			for (int i=0; i<length; i++) {
+				if (password[i].unicode() > 127) {
+					isASCII = false;
+					break;
+				}
+			}
+			if (!isASCII) {
+				message = "The password must only contain ASCII characters.";
+			} else if (length == 10 || length == 26) {
+				message = "You have entered a hexadecimal password. If you want to enter a normal password, it must be 8 to 63 characters long.";
+			} else if (length != 5 && length != 13) {
+				message = "The password must be exactly 5 or 13 characters long.";
+			}
+		}
+	}
+	ui->label_password_confirm->setText(message);
+	ui->label_password_confirm->adjustSize();
+}
+
 void ConfigWindow::on_pushButton_select_all_clicked()
 {
 	for (int i=0; i<list_buttons.size(); i++) {
