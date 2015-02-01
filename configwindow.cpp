@@ -9,7 +9,7 @@ ConfigWindow::ConfigWindow(QWidget* parent) :
 {
 	ui->setupUi(this);
 	QVBoxLayout* layout_drives = new QVBoxLayout(ui->scrollAreaWidgetContents);
-	layout_drives->setContentsMargins(4, 4, 16, 4);
+	layout_drives->setContentsMargins(4, 4, 4, 4);
 	ui->scrollAreaWidgetContents->setLayout(layout_drives);
 
 	refresh_drives();
@@ -58,7 +58,7 @@ void ConfigWindow::refresh_drives()
 			if (current_drives[i].rootPath() != current_drives[i].displayName()) {
 				text_stream << current_drives[i].displayName() << endl;
 			} else {
-				text_stream << "[---]" << endl;
+				text_stream << "[NO NAME]" << endl;
 			}
 			float gigabytes = static_cast<float>(current_drives[i].bytesTotal());
 			gigabytes /= 1024.0*1024.0*1024.0;
@@ -67,7 +67,7 @@ void ConfigWindow::refresh_drives()
 			text_stream << gigabytes << " GB" << endl;
 			QString file_system = current_drives[i].fileSystemType();
 			if (file_system == "") {
-				text_stream << "[?]";
+				text_stream << "Unknown FS";
 			} else {
 				text_stream << file_system;
 			}
@@ -142,7 +142,7 @@ void ConfigWindow::on_radioButton_disabled_toggled(bool checked)
 	ui->pushButton_show_password->setDisabled(checked);
 	ui->label_key_index->setDisabled(checked);
 	ui->spinBox_key_index->setDisabled(checked);
-	ui->label_key_index_help->setDisabled(checked);
+	ui->pushButton_key_index_help->setDisabled(checked);
 }
 
 void ConfigWindow::on_pushButton_show_password_pressed()
