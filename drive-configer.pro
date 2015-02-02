@@ -4,12 +4,14 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+CONFIG	  += c++11
+
+QT		  += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = drive-configer
-TEMPLATE = app
+TARGET	  = drive-configer
+TEMPLATE  = app
 
 
 SOURCES += main.cpp\
@@ -21,3 +23,5 @@ FORMS    += configwindow.ui
 
 RESOURCES += \
     icons.qrc
+
+QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.6
