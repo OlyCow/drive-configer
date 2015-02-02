@@ -26,6 +26,9 @@
 #include <QScrollArea>
 #include <QPushButton>
 
+#include <QMessageBox>
+#include <QProgressDialog>
+
 #include <QMainWindow>
 
 namespace Ui {
@@ -67,6 +70,8 @@ private slots:
 
 	void on_pushButton_show_password_pressed();
 	void on_pushButton_show_password_released();
+
+	void on_lineEdit_password_editingFinished();
 
 	void on_pushButton_select_all_clicked();
 	void on_pushButton_select_invert_clicked();

@@ -9,7 +9,7 @@ ConfigWindow::ConfigWindow(QWidget* parent) :
 {
 	ui->setupUi(this);
 	QVBoxLayout* layout_drives = new QVBoxLayout(ui->scrollAreaWidgetContents);
-	layout_drives->setContentsMargins(4, 4, 16, 4);
+	layout_drives->setContentsMargins(4, 4, 4, 4);
 	ui->scrollAreaWidgetContents->setLayout(layout_drives);
 
 	refresh_drives();
@@ -58,16 +58,71 @@ void ConfigWindow::refresh_drives()
 			if (current_drives[i].rootPath() != current_drives[i].displayName()) {
 				text_stream << current_drives[i].displayName() << endl;
 			} else {
-				text_stream << "[---]" << endl;
+				text_stream << "[NO NAME]" << endl;
 			}
-			float gigabytes = static_cast<float>(current_drives[i].bytesTotal());
-			gigabytes /= 1024.0*1024.0*1024.0;
-			text_stream.setNumberFlags(QTextStream::ForcePoint);
-			text_stream.setRealNumberPrecision(4);
-			text_stream << gigabytes << " GB" << endl;
+			float bytes = static_cast<float>(current_drives[i].bytesTotal());
+			float kilobytes = bytes/1024.0;
+			float megabytes = kilobytes/1024.0;
+			float gigabytes = megabytes/1024.0;
+			enum DispMag {
+				DISP_B	= 0,
+				DISP_K,
+				DISP_M,
+				DISP_G
+			};
+			DispMag dispMag = DISP_G;
+			float disp_float = gigabytes;
+			if (gigabytes < 1.0) {
+				if (megabytes > 1.0) {
+					dispMag = DISP_M;
+				} else if (kilobytes > 1.0) {
+					dispMag = DISP_K;
+				} else {
+					dispMag = DISP_B;
+				}
+			}
+			switch (dispMag) {
+				case DISP_B :
+					disp_float = bytes;
+					break;
+				case DISP_K :
+					disp_float = kilobytes;
+					break;
+				case DISP_M :
+					disp_float = megabytes;
+					break;
+				case DISP_G :
+					disp_float = gigabytes;
+					break;
+			}
+			int float_precision = 4;
+			if (disp_float < 100.0) {
+				float_precision = 3;
+			}
+			if (bytes >= 1.0) {
+				text_stream.setNumberFlags(QTextStream::ForcePoint);
+				text_stream.setRealNumberPrecision(float_precision);
+			}
+			text_stream << disp_float << " ";
+			switch (dispMag) {
+				case DISP_B :
+					text_stream << "bytes";
+					break;
+				case DISP_K :
+					text_stream << "kB";
+					break;
+				case DISP_M :
+					text_stream << "MB";
+					break;
+				case DISP_G :
+					text_stream << "GB";
+					break;
+			}
+
+			text_stream << endl;
 			QString file_system = current_drives[i].fileSystemType();
 			if (file_system == "") {
-				text_stream << "[?]";
+				text_stream << "Unknown FS";
 			} else {
 				text_stream << file_system;
 			}
@@ -142,7 +197,7 @@ void ConfigWindow::on_radioButton_disabled_toggled(bool checked)
 	ui->pushButton_show_password->setDisabled(checked);
 	ui->label_key_index->setDisabled(checked);
 	ui->spinBox_key_index->setDisabled(checked);
-	ui->label_key_index_help->setDisabled(checked);
+	ui->pushButton_key_index_help->setDisabled(checked);
 }
 
 void ConfigWindow::on_pushButton_show_password_pressed()
@@ -152,6 +207,53 @@ void ConfigWindow::on_pushButton_show_password_pressed()
 void ConfigWindow::on_pushButton_show_password_released()
 {
 	ui->lineEdit_password->setEchoMode(QLineEdit::Password);
+}
+
+void ConfigWindow::on_lineEdit_password_editingFinished()
+{
+	QString password = ui->lineEdit_password->text();
+	int length = password.length();
+	QString message = "";
+	if (ui->radioButton_AES->isChecked() || ui->radioButton_TKIP->isChecked()) {
+		if (length>0) {
+			bool isASCII = true;
+			for (int i=0; i<length; i++) {
+				if (password[i].unicode() > 127) {
+					isASCII = false;
+					break;
+				}
+			}
+			if (!isASCII) {
+				message = "The password must only contain ASCII characters.";
+			} else if (length<8 || length>63) {
+				if (length == 64) {
+					message = "You have entered a hexadecimal password. If you want to enter a normal password, it must be 8 to 63 characters long.";
+				} else {
+					message = "The password must be 8 to 63 characters long.";
+				}
+			} else {
+			}
+		}
+	} else if (ui->radioButton_WEP->isChecked()) {
+		if (length > 0) {
+			bool isASCII = true;
+			for (int i=0; i<length; i++) {
+				if (password[i].unicode() > 127) {
+					isASCII = false;
+					break;
+				}
+			}
+			if (!isASCII) {
+				message = "The password must only contain ASCII characters.";
+			} else if (length == 10 || length == 26) {
+				message = "You have entered a hexadecimal password. If you want to enter a normal password, it must be 8 to 63 characters long.";
+			} else if (length != 5 && length != 13) {
+				message = "The password must be exactly 5 or 13 characters long.";
+			}
+		}
+	}
+	ui->label_password_confirm->setText(message);
+	ui->label_password_confirm->adjustSize();
 }
 
 void ConfigWindow::on_pushButton_select_all_clicked()
@@ -248,15 +350,25 @@ QString ConfigWindow::get_SSID()
 QString ConfigWindow::get_key()
 {
 	QString master_key = "";
+	QString password = ui->lineEdit_password->text();
+	int length = password.length();
 	if (ui->radioButton_WEP->isChecked()) {
-		QByteArray ascii_chars(ui->lineEdit_password->text().toLatin1().toHex());
-		master_key = QString(ascii_chars);
+		if (length == 10 || length == 26) {
+			master_key = password;
+		} else {
+			QByteArray ascii_chars(password.toLatin1().toHex());
+			master_key = QString(ascii_chars);
+		}
 	} else if (ui->radioButton_AES->isChecked() || ui->radioButton_TKIP->isChecked()) {
-		master_key = PBKDF2(	ui->lineEdit_password->text(),
-								ui->lineEdit_SSID->text(),
-								4096,
-								32);
-	} // else it should stay as "" (blank)
+		if (length == 64) {
+			master_key = password;
+		} else {
+			master_key = PBKDF2(	ui->lineEdit_password->text(),
+									ui->lineEdit_SSID->text(),
+									4096,
+									32);
+		} // else it should stay as "" (blank)
+	}
 	return master_key;
 }
 QString ConfigWindow::get_auto_key()
@@ -308,6 +420,16 @@ int ConfigWindow::get_key_index()
 
 QByteArray ConfigWindow::PBKDF2(QString password, QString salt, int iterations, int length)
 {
+	QProgressDialog* encrypt_progress = new QProgressDialog();
+	encrypt_progress->setLabelText("Password encryption progress:");
+	encrypt_progress->setMaximum(100);
+	encrypt_progress->setMinimumDuration(0);
+	encrypt_progress->setWindowTitle("Encryption Progress");
+	encrypt_progress->setWindowModality(Qt::WindowModal);
+	encrypt_progress->setMinimumSize(400, 90);
+	encrypt_progress->setValue(0);
+	encrypt_progress->show();
+
 	std::vector<uint8_t> output(length);
 	std::vector<uint8_t> password_vect;
 	for (int i=0; i<password.length(); i++) {
@@ -321,10 +443,13 @@ QByteArray ConfigWindow::PBKDF2(QString password, QString salt, int iterations, 
 													salt_vect,
 													iterations,
 													1);
+	encrypt_progress->setValue(50);
 	std::vector<uint8_t> block_B = encrypt_block(	password_vect,
 													salt_vect,
 													iterations,
 													2);
+	encrypt_progress->setValue(100);
+	delete encrypt_progress;
 	for (int i=0; i<20; i++) {
 		output[i] = block_A[i];
 	}
@@ -367,10 +492,7 @@ std::vector<uint8_t> ConfigWindow::encrypt_block(std::vector<uint8_t> password, 
 		for (int j=0; j<20; j++) {
 			output[j] = output[j] ^ U_i[j];
 		}
-		disp_char_vect(output);
 	}
-	qDebug() << "hash(?):";
-	disp_char_vect(output);
 	return output;
 }
 
