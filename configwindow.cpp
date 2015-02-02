@@ -420,6 +420,16 @@ int ConfigWindow::get_key_index()
 
 QByteArray ConfigWindow::PBKDF2(QString password, QString salt, int iterations, int length)
 {
+	QProgressDialog* encrypt_progress = new QProgressDialog();
+	encrypt_progress->setLabelText("Password encryption progress:");
+	encrypt_progress->setMaximum(100);
+	encrypt_progress->setMinimumDuration(0);
+	encrypt_progress->setWindowTitle("Encryption Progress");
+	encrypt_progress->setWindowModality(Qt::WindowModal);
+	encrypt_progress->setMinimumSize(400, 90);
+	encrypt_progress->setValue(0);
+	encrypt_progress->show();
+
 	std::vector<uint8_t> output(length);
 	std::vector<uint8_t> password_vect;
 	for (int i=0; i<password.length(); i++) {
@@ -433,10 +443,13 @@ QByteArray ConfigWindow::PBKDF2(QString password, QString salt, int iterations, 
 													salt_vect,
 													iterations,
 													1);
+	encrypt_progress->setValue(50);
 	std::vector<uint8_t> block_B = encrypt_block(	password_vect,
 													salt_vect,
 													iterations,
 													2);
+	encrypt_progress->setValue(100);
+	delete encrypt_progress;
 	for (int i=0; i<20; i++) {
 		output[i] = block_A[i];
 	}
@@ -479,10 +492,7 @@ std::vector<uint8_t> ConfigWindow::encrypt_block(std::vector<uint8_t> password, 
 		for (int j=0; j<20; j++) {
 			output[j] = output[j] ^ U_i[j];
 		}
-		disp_char_vect(output);
 	}
-	qDebug() << "hash(?):";
-	disp_char_vect(output);
 	return output;
 }
 
