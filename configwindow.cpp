@@ -350,15 +350,25 @@ QString ConfigWindow::get_SSID()
 QString ConfigWindow::get_key()
 {
 	QString master_key = "";
+	QString password = ui->lineEdit_password->text();
+	int length = password.length();
 	if (ui->radioButton_WEP->isChecked()) {
-		QByteArray ascii_chars(ui->lineEdit_password->text().toLatin1().toHex());
-		master_key = QString(ascii_chars);
+		if (length == 10 || length == 26) {
+			master_key = password;
+		} else {
+			QByteArray ascii_chars(password.toLatin1().toHex());
+			master_key = QString(ascii_chars);
+		}
 	} else if (ui->radioButton_AES->isChecked() || ui->radioButton_TKIP->isChecked()) {
-		master_key = PBKDF2(	ui->lineEdit_password->text(),
-								ui->lineEdit_SSID->text(),
-								4096,
-								32);
-	} // else it should stay as "" (blank)
+		if (length == 64) {
+			master_key = password;
+		} else {
+			master_key = PBKDF2(	ui->lineEdit_password->text(),
+									ui->lineEdit_SSID->text(),
+									4096,
+									32);
+		} // else it should stay as "" (blank)
+	}
 	return master_key;
 }
 QString ConfigWindow::get_auto_key()
