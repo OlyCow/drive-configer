@@ -197,7 +197,7 @@ void ConfigWindow::on_radioButton_disabled_toggled(bool checked)
 	ui->pushButton_show_password->setDisabled(checked);
 	ui->label_key_index->setDisabled(checked);
 	ui->spinBox_key_index->setDisabled(checked);
-	ui->pushButton_key_index_help->setDisabled(checked);
+	ui->label_key_index_help->setDisabled(checked);
 }
 
 void ConfigWindow::on_pushButton_show_password_pressed()
