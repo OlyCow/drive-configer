@@ -584,6 +584,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="pushButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -610,6 +613,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="pushButton_help">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -704,6 +710,9 @@
           </item>
           <item>
            <widget class="QCheckBox" name="checkBox_adHoc">
+            <property name="toolTip">
+             <string>A peer-to-peer network with many known attacks.</string>
+            </property>
             <property name="text">
              <string>Ad-hoc Network</string>
             </property>
@@ -750,6 +759,9 @@
         </item>
         <item row="2" column="1">
          <widget class="QCheckBox" name="checkBox_competition">
+          <property name="toolTip">
+           <string>The config used at competitions.</string>
+          </property>
           <property name="text">
            <string>Competition</string>
           </property>
@@ -773,6 +785,9 @@
         </item>
         <item row="1" column="1">
          <widget class="QCheckBox" name="checkBox_practice">
+          <property name="toolTip">
+           <string>A config that doesn't overwrite that used at competitions.</string>
+          </property>
           <property name="text">
            <string>Practice</string>
           </property>
@@ -787,6 +802,9 @@
        <layout class="QVBoxLayout" name="layout_actions">
         <item>
          <widget class="QPushButton" name="pushButton_load">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="minimumSize">
            <size>
             <width>0</width>
