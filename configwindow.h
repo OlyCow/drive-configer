@@ -26,6 +26,9 @@
 #include <QScrollArea>
 #include <QPushButton>
 
+#include <QMessageBox>
+#include <QProgressDialog>
+
 #include <QMainWindow>
 
 namespace Ui {

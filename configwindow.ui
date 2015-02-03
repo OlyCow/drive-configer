@@ -413,9 +413,6 @@
          </property>
          <item>
           <widget class="QScrollArea" name="scrollArea_drives">
-           <property name="verticalScrollBarPolicy">
-            <enum>Qt::ScrollBarAlwaysOn</enum>
-           </property>
            <property name="horizontalScrollBarPolicy">
             <enum>Qt::ScrollBarAlwaysOff</enum>
            </property>
@@ -430,8 +427,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>184</width>
-              <height>199</height>
+              <width>217</width>
+              <height>196</height>
              </rect>
             </property>
            </widget>

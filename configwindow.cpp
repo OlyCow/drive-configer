@@ -350,15 +350,25 @@ QString ConfigWindow::get_SSID()
 QString ConfigWindow::get_key()
 {
 	QString master_key = "";
+	QString password = ui->lineEdit_password->text();
+	int length = password.length();
 	if (ui->radioButton_WEP->isChecked()) {
-		QByteArray ascii_chars(ui->lineEdit_password->text().toLatin1().toHex());
-		master_key = QString(ascii_chars);
+		if (length == 10 || length == 26) {
+			master_key = password;
+		} else {
+			QByteArray ascii_chars(password.toLatin1().toHex());
+			master_key = QString(ascii_chars);
+		}
 	} else if (ui->radioButton_AES->isChecked() || ui->radioButton_TKIP->isChecked()) {
-		master_key = PBKDF2(	ui->lineEdit_password->text(),
-								ui->lineEdit_SSID->text(),
-								4096,
-								32);
-	} // else it should stay as "" (blank)
+		if (length == 64) {
+			master_key = password;
+		} else {
+			master_key = PBKDF2(	ui->lineEdit_password->text(),
+									ui->lineEdit_SSID->text(),
+									4096,
+									32);
+		} // else it should stay as "" (blank)
+	}
 	return master_key;
 }
 QString ConfigWindow::get_auto_key()
@@ -410,6 +420,16 @@ int ConfigWindow::get_key_index()
 
 QByteArray ConfigWindow::PBKDF2(QString password, QString salt, int iterations, int length)
 {
+	QProgressDialog* encrypt_progress = new QProgressDialog();
+	encrypt_progress->setLabelText("Password encryption progress:");
+	encrypt_progress->setMaximum(100);
+	encrypt_progress->setMinimumDuration(0);
+	encrypt_progress->setWindowTitle("Encryption Progress");
+	encrypt_progress->setWindowModality(Qt::WindowModal);
+	encrypt_progress->setMinimumSize(400, 90);
+	encrypt_progress->setValue(0);
+	encrypt_progress->show();
+
 	std::vector<uint8_t> output(length);
 	std::vector<uint8_t> password_vect;
 	for (int i=0; i<password.length(); i++) {
@@ -423,10 +443,13 @@ QByteArray ConfigWindow::PBKDF2(QString password, QString salt, int iterations, 
 													salt_vect,
 													iterations,
 													1);
+	encrypt_progress->setValue(50);
 	std::vector<uint8_t> block_B = encrypt_block(	password_vect,
 													salt_vect,
 													iterations,
 													2);
+	encrypt_progress->setValue(100);
+	delete encrypt_progress;
 	for (int i=0; i<20; i++) {
 		output[i] = block_A[i];
 	}
@@ -469,10 +492,7 @@ std::vector<uint8_t> ConfigWindow::encrypt_block(std::vector<uint8_t> password, 
 		for (int j=0; j<20; j++) {
 			output[j] = output[j] ^ U_i[j];
 		}
-		disp_char_vect(output);
 	}
-	qDebug() << "hash(?):";
-	disp_char_vect(output);
 	return output;
 }
 
