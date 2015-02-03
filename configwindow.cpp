@@ -5,7 +5,8 @@ ConfigWindow::ConfigWindow(QWidget* parent) :
 	QMainWindow(parent),
 	ui(new Ui::ConfigWindow),
 	refresh_timer(new QTimer(this)),
-	current_drives(QList<QStorageInfo>())
+	current_drives(QList<QStorageInfo>()),
+	aboutWindow(new AboutWindow(this))
 {
 	ui->setupUi(this);
 	QVBoxLayout* layout_drives = new QVBoxLayout(ui->scrollAreaWidgetContents);
@@ -21,6 +22,7 @@ ConfigWindow::ConfigWindow(QWidget* parent) :
 
 ConfigWindow::~ConfigWindow()
 {
+	delete aboutWindow;
 	delete refresh_timer;
 	delete ui;
 }
@@ -381,6 +383,12 @@ void ConfigWindow::on_pushButton_save_clicked()
 			explorer.cdUp();
 		}
 	}
+}
+
+
+void ConfigWindow::on_pushButton_about_clicked()
+{
+	aboutWindow->show();
 }
 
 QString ConfigWindow::get_SSID()

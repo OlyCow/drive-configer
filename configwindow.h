@@ -31,6 +31,8 @@
 
 #include <QMainWindow>
 
+#include "aboutwindow.h"
+
 namespace Ui {
 class ConfigWindow;
 }
@@ -80,11 +82,14 @@ private slots:
 	void on_pushButton_load_clicked();
 	void on_pushButton_save_clicked();
 
+	void on_pushButton_about_clicked();
+
 private:
 	Ui::ConfigWindow* ui;
 	QTimer* refresh_timer;
 	QList<QStorageInfo> current_drives;
 	QVector<QPushButton*> list_buttons;
+	AboutWindow* aboutWindow;
 };
 
 #endif // CONFIGWINDOW_H
