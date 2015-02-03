@@ -108,6 +108,9 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="toolTip">
+            <string>Superseded by the WPA2 protocol.</string>
+           </property>
            <property name="text">
             <string>WPA-PSK</string>
            </property>
@@ -120,6 +123,9 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Most common authentication protocol.</string>
            </property>
            <property name="text">
             <string>WPA2-PSK</string>
@@ -158,6 +164,9 @@
               <property name="enabled">
                <bool>false</bool>
               </property>
+              <property name="toolTip">
+               <string>Anyone can connect to this network.</string>
+              </property>
               <property name="text">
                <string>Disabled</string>
               </property>
@@ -165,6 +174,9 @@
             </item>
             <item row="0" column="1">
              <widget class="QRadioButton" name="radioButton_AES">
+              <property name="toolTip">
+               <string>Most common encryption standard.</string>
+              </property>
               <property name="text">
                <string>AES</string>
               </property>
@@ -178,6 +190,9 @@
               <property name="enabled">
                <bool>false</bool>
               </property>
+              <property name="toolTip">
+               <string>Unsecure encryption standard with many published attacks.</string>
+              </property>
               <property name="text">
                <string>WEP</string>
               </property>
@@ -185,6 +200,9 @@
             </item>
             <item row="1" column="1">
              <widget class="QRadioButton" name="radioButton_TKIP">
+              <property name="toolTip">
+               <string>Encryption standard phased out in favor of AES.</string>
+              </property>
               <property name="text">
                <string>TKIP</string>
               </property>
@@ -224,6 +242,9 @@
               <widget class="QPushButton" name="pushButton_show_password">
                <property name="focusPolicy">
                 <enum>Qt::ClickFocus</enum>
+               </property>
+               <property name="toolTip">
+                <string>Press to show password.</string>
                </property>
                <property name="text">
                 <string/>
@@ -311,46 +332,52 @@
              </property>
             </widget>
            </item>
-           <item alignment="Qt::AlignLeft">
-            <widget class="QPushButton" name="pushButton_key_index_help">
+           <item>
+            <widget class="QLabel" name="label_key_index_help">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
              <property name="minimumSize">
               <size>
-               <width>26</width>
-               <height>0</height>
+               <width>20</width>
+               <height>20</height>
               </size>
              </property>
-             <property name="cursor">
-              <cursorShape>WhatsThisCursor</cursorShape>
-             </property>
-             <property name="focusPolicy">
-              <enum>Qt::NoFocus</enum>
+             <property name="maximumSize">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
              </property>
              <property name="toolTip">
-              <string>&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;This is an advanced feature for storing keys. If you don't know what this is, just leave it as 1.&lt;/span&gt;&lt;/p&gt;</string>
+              <string>Advanced feature. If you don't know what this is, leave it as &quot;1&quot;.</string>
              </property>
              <property name="text">
               <string/>
              </property>
-             <property name="icon">
-              <iconset resource="icons.qrc">
-               <normaloff>:/icons/info.png</normaloff>:/icons/info.png</iconset>
+             <property name="pixmap">
+              <pixmap resource="icons.qrc">:/icons/info.png</pixmap>
              </property>
-             <property name="iconSize">
-              <size>
-               <width>19</width>
-               <height>19</height>
-              </size>
-             </property>
-             <property name="flat">
+             <property name="scaledContents">
               <bool>true</bool>
              </property>
             </widget>
+           </item>
+           <item>
+            <spacer name="spacer_key_index">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
          </item>
@@ -400,8 +427,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>217</width>
-              <height>196</height>
+              <width>201</width>
+              <height>199</height>
              </rect>
             </property>
            </widget>
@@ -520,13 +547,43 @@
       </item>
       <item>
        <widget class="QLabel" name="label_logo">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>31</width>
+          <height>36</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>31</width>
+          <height>36</height>
+         </size>
+        </property>
         <property name="text">
-         <string>[LOGO]</string>
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="icons.qrc">:/icons/logo-cow.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="pushButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -553,6 +610,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="pushButton_help">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -647,6 +707,9 @@
           </item>
           <item>
            <widget class="QCheckBox" name="checkBox_adHoc">
+            <property name="toolTip">
+             <string>A peer-to-peer network with many known attacks.</string>
+            </property>
             <property name="text">
              <string>Ad-hoc Network</string>
             </property>
@@ -693,6 +756,9 @@
         </item>
         <item row="2" column="1">
          <widget class="QCheckBox" name="checkBox_competition">
+          <property name="toolTip">
+           <string>The config used at competitions.</string>
+          </property>
           <property name="text">
            <string>Competition</string>
           </property>
@@ -716,6 +782,9 @@
         </item>
         <item row="1" column="1">
          <widget class="QCheckBox" name="checkBox_practice">
+          <property name="toolTip">
+           <string>A config that doesn't overwrite that used at competitions.</string>
+          </property>
           <property name="text">
            <string>Practice</string>
           </property>
@@ -730,6 +799,9 @@
        <layout class="QVBoxLayout" name="layout_actions">
         <item>
          <widget class="QPushButton" name="pushButton_load">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="minimumSize">
            <size>
             <width>0</width>

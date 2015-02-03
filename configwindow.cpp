@@ -5,7 +5,8 @@ ConfigWindow::ConfigWindow(QWidget* parent) :
 	QMainWindow(parent),
 	ui(new Ui::ConfigWindow),
 	refresh_timer(new QTimer(this)),
-	current_drives(QList<QStorageInfo>())
+	current_drives(QList<QStorageInfo>()),
+	aboutWindow(new AboutWindow(this))
 {
 	ui->setupUi(this);
 	QVBoxLayout* layout_drives = new QVBoxLayout(ui->scrollAreaWidgetContents);
@@ -21,6 +22,7 @@ ConfigWindow::ConfigWindow(QWidget* parent) :
 
 ConfigWindow::~ConfigWindow()
 {
+	delete aboutWindow;
 	delete refresh_timer;
 	delete ui;
 }
@@ -197,7 +199,7 @@ void ConfigWindow::on_radioButton_disabled_toggled(bool checked)
 	ui->pushButton_show_password->setDisabled(checked);
 	ui->label_key_index->setDisabled(checked);
 	ui->spinBox_key_index->setDisabled(checked);
-	ui->pushButton_key_index_help->setDisabled(checked);
+	ui->label_key_index_help->setDisabled(checked);
 }
 
 void ConfigWindow::on_pushButton_show_password_pressed()
@@ -284,13 +286,53 @@ void ConfigWindow::on_pushButton_load_clicked()
 }
 void ConfigWindow::on_pushButton_save_clicked()
 {
+	QString warning_title = "Warning - Drive Configer";
 	QVector<QPushButton*> list_checked;
 	QVector<int> index_checked;
+	bool isFAT32 = true;
 	for (int i=0; i<list_buttons.size(); i++) {
 		if (list_buttons[i]->isChecked()) {
 			list_checked.push_back(list_buttons[i]);
 			index_checked.push_back(i);
+			if (current_drives[i].fileSystemType() != "FAT32") {
+				isFAT32 = false;
+			}
 		}
+	}
+	if (!isFAT32) {
+		QMessageBox* warn = new QMessageBox(	QMessageBox::Information,
+												warning_title,
+												"One or more of the selected drives is not formatted as FAT32. There is no guarantee that the Samantha can be successfully flashed.",
+												QMessageBox::Ok,
+												this	);
+		warn->show();
+	}
+	if (list_checked.size() == 0) {
+		QMessageBox* warn = new QMessageBox(	QMessageBox::Warning,
+												warning_title,
+												"Please select a drive to write the wireless configs to.",
+												QMessageBox::Ok,
+												this	);
+		warn->show();
+		return;
+	}
+	if (ui->label_password_confirm->text() != "") {
+		QMessageBox* warn = new QMessageBox(	QMessageBox::Critical,
+												warning_title,
+												"The password is invalid. Please check the \"password\" field for more information.",
+												QMessageBox::Ok,
+												this	);
+		warn->show();
+		return;
+	}
+	if (ui->radioButton_disabled->isChecked() == false && ui->lineEdit_password->text().length() == 0) {
+		QMessageBox* warn = new QMessageBox(	QMessageBox::Critical,
+												warning_title,
+												"You must enter a password for this encryption type.",
+												QMessageBox::Ok,
+												this	);
+		warn->show();
+		return;
 	}
 	for (int i=0; i<list_checked.size(); i++) {
 		QString output = "";
@@ -341,6 +383,12 @@ void ConfigWindow::on_pushButton_save_clicked()
 			explorer.cdUp();
 		}
 	}
+}
+
+
+void ConfigWindow::on_pushButton_about_clicked()
+{
+	aboutWindow->show();
 }
 
 QString ConfigWindow::get_SSID()
