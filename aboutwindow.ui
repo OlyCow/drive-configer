@@ -166,21 +166,39 @@
        </property>
        <item>
         <widget class="QLabel" name="label_github">
+         <property name="focusPolicy">
+          <enum>Qt::StrongFocus</enum>
+         </property>
          <property name="text">
-          <string>Source Code</string>
+          <string>&lt;a href=&quot;https://github.com/OlyCow/drive-configer&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#0000ff;&quot;&gt;Source Code&lt;/span&gt;&lt;/a&gt;</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
+         </property>
+         <property name="openExternalLinks">
+          <bool>true</bool>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse</set>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="label_facebook">
+         <property name="focusPolicy">
+          <enum>Qt::StrongFocus</enum>
+         </property>
          <property name="text">
-          <string>Facebook Page</string>
+          <string>&lt;a href=&quot;https://www.facebook.com/pages/OHS-Oly-Cow-Robotics/160019847470634&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#0000ff;&quot;&gt;Facebook Page&lt;/span&gt;&lt;/a&gt;</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
+         </property>
+         <property name="openExternalLinks">
+          <bool>true</bool>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse</set>
          </property>
         </widget>
        </item>
@@ -293,6 +311,9 @@
       </property>
       <property name="text">
        <string>Ok. I'm glad to know that.</string>
+      </property>
+      <property name="default">
+       <bool>true</bool>
       </property>
      </widget>
      <zorder>label_team</zorder>
