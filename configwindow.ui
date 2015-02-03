@@ -353,7 +353,7 @@
               </size>
              </property>
              <property name="toolTip">
-              <string>&lt;span style=&quot; font-size:12pt;&quot;&gt;Advanced feature. If you don't know what this is, leave it as &amp;quot;1&amp;quot;.&lt;/span&gt;</string>
+              <string>Advanced feature. If you don't know what this is, leave it as &quot;1&quot;.</string>
              </property>
              <property name="text">
               <string/>
@@ -427,8 +427,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>217</width>
-              <height>196</height>
+              <width>201</width>
+              <height>199</height>
              </rect>
             </property>
            </widget>
