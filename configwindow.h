@@ -45,6 +45,8 @@ public:
 	explicit ConfigWindow(QWidget* parent = 0);
 	~ConfigWindow();
 
+	void read_configs(QString file_path);
+
 	QString get_SSID();
 	QString get_key();
 	QString get_auto_key();
