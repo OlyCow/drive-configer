@@ -14,6 +14,11 @@ ConfigWindow::ConfigWindow(QWidget* parent) :
 	ui->scrollAreaWidgetContents->setLayout(layout_drives);
 
 	refresh_drives();
+	for (int i=0; i<current_drives.length(); i++) {
+		if (current_drives[i].fileSystemType() == "FAT32") {
+			list_buttons[i]->setChecked(true);
+		}
+	}
 
 	QObject::connect(	refresh_timer,	&QTimer::timeout,
 						this,			&ConfigWindow::refresh_drives);
