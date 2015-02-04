@@ -283,6 +283,74 @@ void ConfigWindow::on_pushButton_select_none_clicked()
 
 void ConfigWindow::on_pushButton_load_clicked()
 {
+	QString warning_title = "Warning - Drive Configer";
+	QVector<QPushButton*> list_checked;
+	QVector<int> index_checked;
+	for (int i=0; i<list_buttons.size(); i++) {
+		if (list_buttons[i]->isChecked()) {
+			list_checked.push_back(list_buttons[i]);
+			index_checked.push_back(i);
+		}
+	}
+	if (list_checked.size() == 0) {
+		QMessageBox* warn = new QMessageBox(	QMessageBox::Warning,
+												warning_title,
+												"Please select a drive to load configs from.",
+												QMessageBox::Ok,
+												this	);
+		warn->exec();
+		return;
+	}
+	if (list_checked.size() > 1) {
+		QMessageBox* warn = new QMessageBox(	QMessageBox::Warning,
+												warning_title,
+												"You selected more than one drive. Please select a single drive to load configs from.",
+												QMessageBox::Ok,
+												this	);
+		warn->exec();
+		return;
+	}
+	if (current_drives[index_checked[0]].fileSystemType() != "FAT32") {
+		QMessageBox* warn = new QMessageBox(	QMessageBox::Information,
+												warning_title,
+												"The file system of the selected drive is not \"FAT32\". This drive is not guaranteed to work.",
+												QMessageBox::Ok,
+												this	);
+		warn->exec();
+	}
+	QDir* practice_path = new QDir(current_drives[index_checked[0]].rootPath());
+	QDir* competition_path = new QDir(current_drives[index_checked[0]].rootPath());
+	bool isPractice = practice_path->cd("SMRTNTKY");
+	bool isCompetition = practice_path->cd("FTCNTKY");
+	if ((isPractice || isCompetition) == false) {
+		QMessageBox* warn = new QMessageBox(	QMessageBox::Information,
+												warning_title,
+												"There were no config files detected on the selected drive.",
+												QMessageBox::Ok,
+												this	);
+		warn->exec();
+		return;
+	}
+	if ((isPractice && isCompetition) == true) {
+		QMessageBox* warn = new QMessageBox(	QMessageBox::Information,
+												warning_title,
+												"Both practice and competition configs were detected. Competition configs will overwrite practice ones.",
+												QMessageBox::Ok,
+												this	);
+		warn->exec();
+	}
+	if (isPractice) {
+		ui->checkBox_practice->setChecked(true);
+		read_configs(practice_path->absolutePath() + "/WSETTING.TXT");
+	} else {
+		ui->checkBox_practice->setChecked(false);
+	}
+	if (isCompetition) {
+		ui->checkBox_competition->setChecked(true);
+		read_configs(competition_path->absolutePath() + "/WSETTING.TXT");
+	} else {
+		ui->checkBox_competition->setChecked(false);
+	}
 }
 void ConfigWindow::on_pushButton_save_clicked()
 {
@@ -302,10 +370,10 @@ void ConfigWindow::on_pushButton_save_clicked()
 	if (!isFAT32) {
 		QMessageBox* warn = new QMessageBox(	QMessageBox::Information,
 												warning_title,
-												"One or more of the selected drives is not formatted as FAT32. There is no guarantee that the Samantha can be successfully flashed.",
+												"One or more of the selected drives is not formatted as FAT32. There is no guarantee that the Samantha will be successfully flashed.",
 												QMessageBox::Ok,
 												this	);
-		warn->show();
+		warn->exec();
 	}
 	if (list_checked.size() == 0) {
 		QMessageBox* warn = new QMessageBox(	QMessageBox::Warning,
@@ -313,25 +381,25 @@ void ConfigWindow::on_pushButton_save_clicked()
 												"Please select a drive to write the wireless configs to.",
 												QMessageBox::Ok,
 												this	);
-		warn->show();
+		warn->exec();
 		return;
 	}
 	if (ui->label_password_confirm->text() != "") {
-		QMessageBox* warn = new QMessageBox(	QMessageBox::Critical,
+		QMessageBox* warn = new QMessageBox(	QMessageBox::Warning,
 												warning_title,
 												"The password is invalid. Please check the \"password\" field for more information.",
 												QMessageBox::Ok,
 												this	);
-		warn->show();
+		warn->exec();
 		return;
 	}
 	if (ui->radioButton_disabled->isChecked() == false && ui->lineEdit_password->text().length() == 0) {
-		QMessageBox* warn = new QMessageBox(	QMessageBox::Critical,
+		QMessageBox* warn = new QMessageBox(	QMessageBox::Warning,
 												warning_title,
 												"You must enter a password for this encryption type.",
 												QMessageBox::Ok,
 												this	);
-		warn->show();
+		warn->exec();
 		return;
 	}
 	for (int i=0; i<list_checked.size(); i++) {
@@ -364,7 +432,7 @@ void ConfigWindow::on_pushButton_save_clicked()
 			explorer.mkdir("SMRTNTKY");
 			explorer.cd("SMRTNTKY");
 			QFile settings(explorer.absolutePath() + "/WSETTING.TXT");
-			settings.open(QIODevice::ReadWrite | QIODevice::Text);
+			settings.open(QIODevice::WriteOnly | QIODevice::Text);
 			QTextStream writer(&settings);
 			writer << output;
 			writer.flush();
@@ -375,7 +443,7 @@ void ConfigWindow::on_pushButton_save_clicked()
 			explorer.mkdir("FTCNTKY");
 			explorer.cd("FTCNTKY");
 			QFile settings(explorer.absolutePath() + "/WSETTING.TXT");
-			settings.open(QIODevice::ReadWrite | QIODevice::Text);
+			settings.open(QIODevice::WriteOnly | QIODevice::Text);
 			QTextStream writer(&settings);
 			writer << output;
 			writer.flush();
@@ -385,6 +453,99 @@ void ConfigWindow::on_pushButton_save_clicked()
 	}
 }
 
+void ConfigWindow::read_configs(QString file_path)
+{
+	QString error_title = "Error - Drive Configer";
+	QFile settings(file_path);
+	settings.open(QIODevice::ReadOnly | QIODevice::Text);
+	QTextStream text(&settings);
+	QString text_buff;
+	text_buff = text.readLine();			// "Wireless Network Settings"
+	text_buff = text.readLine();			// ""
+	text_buff = text.readLine();			// "Print this document [...]"
+	text_buff = text.readLine();			// ""
+	text_buff = text.readLine();			// ""
+	text_buff = text.readLine();			// "Wireless Settings"
+	text_buff = text.readLine();			// ""
+	QString text_SSID = text.readLine();	// "Network Name (SSID): "
+	QString text_key = text.readLine();		// "Network Key (WEP/WPA Key): "
+	text_buff = text.readLine();			// "Key Provided Automatically (802.1x): 0"
+	QString text_auth = text.readLine();	// "Network Authentication Type: "
+	QString text_encrypt = text.readLine();	// "Data Encryption Type: "
+	QString text_ad_hoc = text.readLine();	// "Connection Type: "
+	QString text_index = text.readLine();	// "Key Index: "
+	settings.close();
+
+	text_SSID.remove(0, QString("Network Name (SSID): ").length());
+	ui->lineEdit_SSID->setText(text_SSID);
+	text_key.remove(0, QString("Network Key (WEP/WPA Key): ").length());
+	ui->lineEdit_password->setText(text_key);
+	text_auth.remove(0, QString("Network Authentication Type: ").length());
+	if (text_auth == "Open") {
+		ui->radioButton_open->click();
+	} else if (text_auth == "Shared") {
+		ui->radioButton_shared->click();
+	} else if (text_auth == "WPAPSK") {
+		ui->radioButton_WPA->click();
+	} else if (text_auth == "WPA2PSK") {
+		ui->radioButton_WPA2->click();
+	} else {
+		QMessageBox* warn = new QMessageBox(	QMessageBox::Critical,
+												error_title,
+												"Cannot recognize authentication protocol.",
+												QMessageBox::Ok,
+												this	);
+		warn->exec();
+	}
+	text_encrypt.remove(0, QString("Data Encryption Type: ").length());
+	if (text_encrypt == "Disabled") {
+		ui->radioButton_disabled->click();
+	} else if (text_auth == "WEP") {
+		ui->radioButton_WEP->click();
+	} else if (text_auth == "AES") {
+		ui->radioButton_AES->click();
+	} else if (text_auth == "TKIP") {
+		ui->radioButton_TKIP->click();
+	} else {
+		QMessageBox* warn = new QMessageBox(	QMessageBox::Critical,
+												error_title,
+												"Cannot recognize method of encryption.",
+												QMessageBox::Ok,
+												this	);
+		warn->exec();
+	}
+	text_ad_hoc.remove(0, QString("Connection Type: ").length());
+	if (text_ad_hoc == "IBSS") {
+		ui->checkBox_adHoc->setChecked(true);
+	} else if (text_ad_hoc == "ESS") {
+		ui->checkBox_adHoc->setChecked(false);
+	} else {
+		QMessageBox* warn = new QMessageBox(	QMessageBox::Critical,
+												error_title,
+												"Cannot recognize connection type (ad-hoc vs. not).",
+												QMessageBox::Ok,
+												this	);
+		warn->exec();
+	}
+	int key_index = text_index.remove(0, QString("Key Index: ").length()).toInt();
+	if (key_index >= 1 && key_index <= 4) {
+		ui->spinBox_key_index->setValue(key_index);
+	} else {
+		QMessageBox* warn = new QMessageBox(	QMessageBox::Critical,
+												error_title,
+												"Key index out-of-range.",
+												QMessageBox::Ok,
+												this	);
+		warn->exec();
+	}
+
+	qDebug() << text_SSID;
+	qDebug() << text_key;
+	qDebug() << text_auth;
+	qDebug() << text_encrypt;
+	qDebug() << text_ad_hoc;
+	qDebug() << text_index;
+}
 
 void ConfigWindow::on_pushButton_about_clicked()
 {
