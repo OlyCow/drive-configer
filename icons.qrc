@@ -4,7 +4,7 @@
         <file>icons/eye.png</file>
         <file>icons/info.png</file>
         <file>icons/upload.png</file>
-        <file>icons/key.png</file>
         <file>icons/logo-cow.png</file>
+        <file>icons/logo-key.png</file>
     </qresource>
 </RCC>

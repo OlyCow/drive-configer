@@ -32,7 +32,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="icons.qrc">
-    <normaloff>:/icons/key.png</normaloff>:/icons/key.png</iconset>
+    <normaloff>:/icons/logo-key.png</normaloff>:/icons/logo-key.png</iconset>
   </property>
   <widget class="QWidget" name="widget_main">
    <layout class="QGridLayout" name="gridLayout_main">
